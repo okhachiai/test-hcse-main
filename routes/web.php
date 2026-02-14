@@ -22,13 +22,13 @@ Route::prefix('offers')->name('offers.')->middleware(['auth', 'verified'])->grou
     Route::delete('/{offer}', [OfferController::class, 'destroy'])->name('destroy');
 
     // Products management nested under offers
-    Route::prefix('{offer}/products')->name('products.')->group(function () {
+    Route::prefix('{offer}/products')->name('products.')->scopeBindings()->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('index');
         Route::get('/create', [ProductController::class, 'create'])->name('create');
         Route::post('/', [ProductController::class, 'store'])->name('store');
-        Route::get('/{product:offer}/edit', [ProductController::class, 'edit'])->name('edit');
-        Route::patch('/{product:offer}', [ProductController::class, 'update'])->name('update');
-        Route::delete('/{product:offer}', [ProductController::class, 'destroy'])->name('destroy');
+        Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('edit');
+        Route::patch('/{product}', [ProductController::class, 'update'])->name('update');
+        Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
     });
 });
 

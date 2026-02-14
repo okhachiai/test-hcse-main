@@ -10,10 +10,13 @@
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     <section>
-                        <header>
+                        <header class="flex items-center justify-between gap-4">
                             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
                                 Modifier une offre
                             </h2>
+                            <x-secondary-link href="{{ route('offers.products.index', $offer) }}">
+                                Gérer les produits
+                            </x-secondary-link>
                         </header>
 
                         <form method="post" action="{{ route('offers.update', $offer) }}" class="mt-6 space-y-6" enctype="multipart/form-data">

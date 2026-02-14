@@ -7,6 +7,7 @@ namespace App\Actions;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Offer;
 use App\Models\Product;
+use App\Repositories\ProductRepository;
 use App\Services\ImageStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
@@ -14,6 +15,7 @@ use Illuminate\Routing\Redirector;
 readonly class UpdateProductAction
 {
     public function __construct(
+        private ProductRepository $productRepository,
         private ImageStorage $imageStorage,
         private Redirector $redirector
     ) {}
@@ -31,7 +33,7 @@ readonly class UpdateProductAction
             $data['image'] = $this->imageStorage->replace($product->image, $request->file('image'), 'products');
         }
 
-        $product->update($data);
+        $this->productRepository->update($product, $data);
 
         return $this->redirector
             ->route('offers.products.index', $offer)

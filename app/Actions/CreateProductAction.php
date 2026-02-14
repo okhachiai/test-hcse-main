@@ -6,7 +6,7 @@ namespace App\Actions;
 
 use App\Http\Requests\StoreProductRequest;
 use App\Models\Offer;
-use App\Models\Product;
+use App\Repositories\ProductRepository;
 use App\Services\ImageStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
@@ -14,6 +14,7 @@ use Illuminate\Routing\Redirector;
 readonly class CreateProductAction
 {
     public function __construct(
+        private ProductRepository $productRepository,
         private ImageStorage $imageStorage,
         private Redirector $redirector
     ) {}
@@ -28,9 +29,7 @@ readonly class CreateProductAction
             'state' => $request->validated('state'),
         ];
 
-        $product = new Product($data);
-        $product->offer_id = $offer->id;
-        $product->save();
+        $this->productRepository->create($offer, $data);
 
         return $this->redirector
             ->route('offers.products.index', $offer)

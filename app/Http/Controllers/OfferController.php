@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\CreateOfferAction;
 use App\Actions\DeleteOfferAction;
+use App\Actions\ListProductsAction;
 use App\Actions\UpdateOfferAction;
 use App\Http\Requests\StoreOfferRequest;
 use App\Http\Requests\UpdateOfferRequest;
@@ -27,30 +28,32 @@ class OfferController extends Controller
 
     public function edit(Offer $offer): View
     {
-        $this->authorize('update', $offer);
+        $this->authorize('manage', $offer);
 
         return view('offers.edit', ['offer' => $offer]);
     }
 
     public function update(UpdateOfferRequest $request, UpdateOfferAction $updateOfferAction, Offer $offer): RedirectResponse
     {
-        $this->authorize('update', $offer);
+        $this->authorize('manage', $offer);
 
         return $updateOfferAction->execute($request, $offer);
     }
 
     public function destroy(DeleteOfferAction $deleteOfferAction, Offer $offer): RedirectResponse
     {
-        $this->authorize('delete', $offer);
+        $this->authorize('manage', $offer);
 
         return $deleteOfferAction->execute($offer);
     }
 
-    public function show(Offer $offer): View
+    public function show(ListProductsAction $listProductsAction, Offer $offer): View
     {
-        $this->authorize('view', $offer);
-        $offer->load('products');
+        $this->authorize('manage', $offer);
 
-        return view('offers.show', ['offer' => $offer]);
+        return view('offers.show', [
+            'offer' => $offer,
+            'products' => $listProductsAction->execute($offer),
+        ]);
     }
 }

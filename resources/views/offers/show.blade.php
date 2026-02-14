@@ -52,7 +52,7 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                @forelse($offer->products as $product)
+                                @forelse($products as $product)
                                     <tr>
                                         <td class="px-4 py-3">{{ $product->id }}</td>
                                         <td class="px-4 py-3">
@@ -79,6 +79,12 @@
                             </tbody>
                         </table>
                     </div>
+
+                    @if($products->hasPages())
+                        <div class="mt-4">
+                            {{ $products->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

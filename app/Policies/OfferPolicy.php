@@ -9,18 +9,8 @@ use App\Models\User;
 
 class OfferPolicy
 {
-    public function view(User $user, Offer $offer): bool
+    public function manage(User $user, Offer $offer): bool
     {
-        return $offer->user_id === $user->id;
-    }
-
-    public function update(User $user, Offer $offer): bool
-    {
-        return $offer->user_id === $user->id;
-    }
-
-    public function delete(User $user, Offer $offer): bool
-    {
-        return $offer->user_id === $user->id;
+        return $user->is($offer->user);
     }
 }
