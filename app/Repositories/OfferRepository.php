@@ -34,6 +34,7 @@ class OfferRepository
     public function getPublishedPaginated(int $perPage = Pagination::DefaultPerPage->value): LengthAwarePaginator
     {
         return Offer::published()
+            ->latest()
             ->with(['products' => fn ($q) => $q->published()])
             ->paginate($perPage);
     }
@@ -68,6 +69,6 @@ class OfferRepository
             $query->where('slug', 'like', "%{$slug}%");
         }
 
-        return $query;
+        return $query->latest();
     }
 }

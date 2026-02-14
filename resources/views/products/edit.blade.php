@@ -30,7 +30,11 @@
                             </div>
                             <div>
                                 <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Image</label>
-                                <x-file-input name="image" id="image" />
+                                @if($product->image)
+                                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="h-20 object-cover rounded-md border border-gray-200 dark:border-gray-700 mt-2" />
+                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Laisser vide pour conserver l'image actuelle.</p>
+                                @endif
+                                <x-file-input name="image" id="image" class="mt-1 block w-full" />
                                 @error('image')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                                 @enderror
