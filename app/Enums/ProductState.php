@@ -10,6 +10,25 @@ enum ProductState: string
     case Published = 'published';
     case Invisible = 'invisible';
 
+    /**
+     * States reachable from this state.
+     *
+     * @return array<self>
+     */
+    public function allowedTransitions(): array
+    {
+        return match ($this) {
+            self::Draft => [self::Published, self::Invisible],
+            self::Published => [self::Draft, self::Invisible],
+            self::Invisible => [self::Draft, self::Published],
+        };
+    }
+
+    public function canTransitionTo(self $to): bool
+    {
+        return in_array($to, $this->allowedTransitions(), true);
+    }
+
     public function label(): string
     {
         return match ($this) {

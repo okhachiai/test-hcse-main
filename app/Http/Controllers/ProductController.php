@@ -49,14 +49,14 @@ class ProductController extends Controller
 
     public function edit(Offer $offer, Product $product): View
     {
-        $this->authorize('manage', $offer);
+        $this->authorize('manage', $product);
 
         return view('products.edit', ['offer' => $offer, 'product' => $product]);
     }
 
     public function update(UpdateProductRequest $request, UpdateProductAction $updateProductAction, Offer $offer, Product $product): RedirectResponse
     {
-        $this->authorize('manage', $offer);
+        $this->authorize('manage', $product);
 
         $updateProductAction->execute($request, $offer, $product);
 
@@ -65,7 +65,7 @@ class ProductController extends Controller
 
     public function destroy(DeleteProductAction $deleteProductAction, Offer $offer, Product $product): RedirectResponse
     {
-        $this->authorize('manage', $offer);
+        $this->authorize('manage', $product);
 
         $deleteProductAction->execute($product);
 

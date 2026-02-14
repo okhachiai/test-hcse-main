@@ -10,6 +10,25 @@ enum OfferState: string
     case Published = 'published';
     case Hidden = 'hidden';
 
+    /**
+     * States reachable from this state.
+     *
+     * @return array<self>
+     */
+    public function allowedTransitions(): array
+    {
+        return match ($this) {
+            self::Draft => [self::Published, self::Hidden],
+            self::Published => [self::Draft, self::Hidden],
+            self::Hidden => [self::Draft, self::Published],
+        };
+    }
+
+    public function canTransitionTo(self $to): bool
+    {
+        return in_array($to, $this->allowedTransitions(), true);
+    }
+
     public function label(): string
     {
         return match ($this) {

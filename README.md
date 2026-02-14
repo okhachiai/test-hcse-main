@@ -35,16 +35,17 @@
 
 ## Ce qui a été modifié (résumé)
 
-- **Enums** : états typés (OfferState, ProductState) à la place de tableaux statiques.
+- **Enums** : états typés (OfferState, ProductState) avec `allowedTransitions()` et `canTransitionTo()` pour les règles de transition.
 - **Actions** : logique métier extraite (Create, Update, Delete, List). Controllers allégés.
 - **Repositories** : requêtes encapsulées, scopes `published()`/`draft()`, tri `latest()` par défaut.
 - **ImageStorage** : service dédié pour stocker et remplacer les images.
 - **Resources** : réponses API normalisées via OfferResource/ProductResource.
 - **Dashboard** : filtres (state, name, slug) + pagination avec préservation des query strings.
 - **Validation** : FormRequests avec `Rule::enum()`, règles partagées.
-- **Tests** : unitaires (scopes, repositories, ImageStorage), feature (API, dashboard, validation, console).
+- **Tests** : unitaires (scopes, repositories, ImageStorage, OfferState, ProductState), feature (API, dashboard, validation, console).
 - **PHPStan** : niveau 9, sans baseline, erreurs corrigées.
 - **CI** : GitHub Actions (lint Pint, PHPStan, tests) sur push/PR vers `main`.
+- **Bonus** : API rate limiting (60 req/min), ProductPolicy, règles de transition d’état dans les Enums.
 
 ---
 
@@ -53,8 +54,6 @@
 **Temps passé : 7h**
 
 **Avec plus de temps, j'aurais :**
-- Introduire DDD light avec un Domain (Enums, Sku, Price VOs, OfferCanBePublishedSpecification), Application (Actions, Contracts), Infrastructure (Repositories, OfferQueryService). Interfaces Repository + bindings.
-- Introduire l'API rate limiting (60 req/min), ProductPolicy, règles de transition d’état dans les Enums.
 - Introduire des jobs asynchrones pour le traitement des images (resize, optimisation)
 - Introduire un system de cache robuste pour améliorer les perfs
 - Ajouter des tests E2E (Dusk) pour les flux critiques du back-office
