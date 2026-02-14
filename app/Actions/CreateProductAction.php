@@ -18,10 +18,8 @@ readonly class CreateProductAction
         private Redirector $redirector
     ) {}
 
-    public function execute(StoreProductRequest $request, int $offerId): RedirectResponse
+    public function execute(StoreProductRequest $request, Offer $offer): RedirectResponse
     {
-        $offer = Offer::findOrFail($offerId);
-
         $data = [
             'name' => $request->validated('name'),
             'sku' => $request->validated('sku'),
@@ -35,7 +33,7 @@ readonly class CreateProductAction
         $product->save();
 
         return $this->redirector
-            ->route('offers.products.index', $offer->id)
+            ->route('offers.products.index', $offer)
             ->with('status', 'Produit créé avec succès.');
     }
 }

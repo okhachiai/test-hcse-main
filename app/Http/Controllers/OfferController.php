@@ -6,8 +6,6 @@ namespace App\Http\Controllers;
 
 use App\Actions\CreateOfferAction;
 use App\Actions\DeleteOfferAction;
-use App\Actions\EditOfferAction;
-use App\Actions\ShowOfferAction;
 use App\Actions\UpdateOfferAction;
 use App\Http\Requests\StoreOfferRequest;
 use App\Http\Requests\UpdateOfferRequest;
@@ -27,34 +25,31 @@ class OfferController extends Controller
         return $createOfferAction->execute($request);
     }
 
-    public function edit(EditOfferAction $editOfferAction, string $offerId): View
+    public function edit(Offer $offer): View
     {
-        $offer = $editOfferAction->execute((int) $offerId);
         $this->authorize('update', $offer);
 
         return view('offers.edit', ['offer' => $offer]);
     }
 
-    public function update(UpdateOfferRequest $request, UpdateOfferAction $updateOfferAction, string $offerId): RedirectResponse
+    public function update(UpdateOfferRequest $request, UpdateOfferAction $updateOfferAction, Offer $offer): RedirectResponse
     {
-        $offer = Offer::findOrFail((int) $offerId);
         $this->authorize('update', $offer);
 
-        return $updateOfferAction->execute($request, (int) $offerId);
+        return $updateOfferAction->execute($request, $offer);
     }
 
-    public function destroy(DeleteOfferAction $deleteOfferAction, string $offerId): RedirectResponse
+    public function destroy(DeleteOfferAction $deleteOfferAction, Offer $offer): RedirectResponse
     {
-        $offer = Offer::findOrFail((int) $offerId);
         $this->authorize('delete', $offer);
 
-        return $deleteOfferAction->execute((int) $offerId);
+        return $deleteOfferAction->execute($offer);
     }
 
-    public function show(ShowOfferAction $showOfferAction, string $offerId): View
+    public function show(Offer $offer): View
     {
-        $offer = $showOfferAction->execute((int) $offerId);
         $this->authorize('view', $offer);
+        $offer->load('products');
 
         return view('offers.show', ['offer' => $offer]);
     }

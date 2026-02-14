@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\Models\Offer;
 use App\Repositories\OfferRepository;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
@@ -15,9 +16,9 @@ readonly class DeleteOfferAction
         private Redirector $redirector
     ) {}
 
-    public function execute(int $offerId): RedirectResponse
+    public function execute(Offer $offer): RedirectResponse
     {
-        $this->offerRepository->delete($offerId);
+        $this->offerRepository->delete($offer->id);
 
         return $this->redirector->route('dashboard');
     }

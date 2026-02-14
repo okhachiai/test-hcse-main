@@ -16,7 +16,7 @@
                             </h2>
                         </header>
 
-                        <form method="post" action="{{ route('offers.update', $offer->id) }}" class="mt-6 space-y-6" enctype="multipart/form-data">
+                        <form method="post" action="{{ route('offers.update', $offer) }}" class="mt-6 space-y-6" enctype="multipart/form-data">
                             @csrf
                             @method('patch')
 

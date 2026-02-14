@@ -15,11 +15,11 @@ class UpdateOfferRequest extends FormRequest
      */
     public function rules(): array
     {
-        $offerId = (int) $this->route('offerId');
+        $offer = $this->route('offer');
 
         return [
             'name' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', Rule::unique('offers', 'slug')->ignore($offerId)],
+            'slug' => ['required', 'string', 'max:255', Rule::unique('offers', 'slug')->ignore($offer)],
             'image' => ['nullable', 'file', 'image'],
             'description' => ['nullable', 'string', 'max:255'],
             'state' => ['required', 'string', 'in:draft,published,hidden'],

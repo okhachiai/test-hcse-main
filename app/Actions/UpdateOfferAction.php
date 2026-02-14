@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions;
 
 use App\Http\Requests\UpdateOfferRequest;
+use App\Models\Offer;
 use App\Repositories\OfferRepository;
 use App\Services\ImageStorage;
 use Illuminate\Http\RedirectResponse;
@@ -18,10 +19,8 @@ readonly class UpdateOfferAction
         private Redirector $redirector
     ) {}
 
-    public function execute(UpdateOfferRequest $request, int $offerId): RedirectResponse
+    public function execute(UpdateOfferRequest $request, Offer $offer): RedirectResponse
     {
-        $offer = $this->offerRepository->findOrFail($offerId);
-
         $data = [
             'name' => $request->validated('name'),
             'slug' => $request->validated('slug'),

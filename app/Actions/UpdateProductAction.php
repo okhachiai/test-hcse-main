@@ -6,6 +6,7 @@ namespace App\Actions;
 
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Offer;
+use App\Models\Product;
 use App\Services\ImageStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
@@ -17,11 +18,8 @@ readonly class UpdateProductAction
         private Redirector $redirector
     ) {}
 
-    public function execute(UpdateProductRequest $request, int $offerId, int $productId): RedirectResponse
+    public function execute(UpdateProductRequest $request, Offer $offer, Product $product): RedirectResponse
     {
-        $offer = Offer::findOrFail($offerId);
-        $product = $offer->products()->findOrFail($productId);
-
         $data = [
             'name' => $request->validated('name'),
             'sku' => $request->validated('sku'),
@@ -36,7 +34,7 @@ readonly class UpdateProductAction
         $product->update($data);
 
         return $this->redirector
-            ->route('offers.products.index', $offer->id)
+            ->route('offers.products.index', $offer)
             ->with('status', 'Produit mis à jour avec succès.');
     }
 }

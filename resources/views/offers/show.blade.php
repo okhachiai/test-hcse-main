@@ -30,8 +30,8 @@
                             @endif
 
                             <div class="mt-4 flex gap-2">
-                                <x-primary-link href="{{ route('offers.edit', $offer->id) }}">Modifier l'offre</x-primary-link>
-                                <x-secondary-link href="{{ route('offers.products.index', $offer->id) }}">Gérer les produits</x-secondary-link>
+                                <x-primary-link href="{{ route('offers.edit', $offer) }}">Modifier l'offre</x-primary-link>
+                                <x-secondary-link href="{{ route('offers.products.index', $offer) }}">Gérer les produits</x-secondary-link>
                                 <a href="{{ route('dashboard') }}" class="inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">Retour</a>
                             </div>
                         </div>

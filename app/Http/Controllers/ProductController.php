@@ -15,9 +15,8 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    public function index(string $offerId): View
+    public function index(Offer $offer): View
     {
-        $offer = Offer::findOrFail($offerId);
         $this->authorize('view', $offer);
 
         $products = $offer->products()->latest()->get();
@@ -25,9 +24,8 @@ class ProductController extends Controller
         return view('products.index', ['offer' => $offer, 'products' => $products]);
     }
 
-    public function create(string $offerId): View
+    public function create(Offer $offer): View
     {
-        $offer = Offer::findOrFail($offerId);
         $this->authorize('update', $offer);
 
         $product = new Product;
@@ -35,42 +33,35 @@ class ProductController extends Controller
         return view('products.create', ['offer' => $offer, 'product' => $product]);
     }
 
-    public function store(StoreProductRequest $request, CreateProductAction $createProductAction, string $offerId): RedirectResponse
+    public function store(StoreProductRequest $request, CreateProductAction $createProductAction, Offer $offer): RedirectResponse
     {
-        $offer = Offer::findOrFail($offerId);
         $this->authorize('update', $offer);
 
-        return $createProductAction->execute($request, (int) $offerId);
+        return $createProductAction->execute($request, $offer);
     }
 
-    public function edit(string $offerId, string $productId): View
+    public function edit(Offer $offer, Product $product): View
     {
-        $offer = Offer::findOrFail($offerId);
         $this->authorize('update', $offer);
-
-        $product = $offer->products()->findOrFail($productId);
 
         return view('products.edit', ['offer' => $offer, 'product' => $product]);
     }
 
-    public function update(UpdateProductRequest $request, UpdateProductAction $updateProductAction, string $offerId, string $productId): RedirectResponse
+    public function update(UpdateProductRequest $request, UpdateProductAction $updateProductAction, Offer $offer, Product $product): RedirectResponse
     {
-        $offer = Offer::findOrFail($offerId);
         $this->authorize('update', $offer);
 
-        return $updateProductAction->execute($request, (int) $offerId, (int) $productId);
+        return $updateProductAction->execute($request, $offer, $product);
     }
 
-    public function destroy(string $offerId, string $productId): RedirectResponse
+    public function destroy(Offer $offer, Product $product): RedirectResponse
     {
-        $offer = Offer::findOrFail($offerId);
         $this->authorize('update', $offer);
 
-        $product = $offer->products()->findOrFail($productId);
         $product->delete();
 
         return redirect()
-            ->route('offers.products.index', $offer->id)
+            ->route('offers.products.index', $offer)
             ->with('status', 'Produit supprimé avec succès.');
     }
 }

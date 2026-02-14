@@ -16,11 +16,11 @@ class UpdateProductRequest extends FormRequest
      */
     public function rules(): array
     {
-        $productId = (int) $this->route('productId');
+        $product = $this->route('product');
 
         return [
             'name' => ['required', 'string', 'max:255'],
-            'sku' => ['required', 'string', 'max:255', Rule::unique('products', 'sku')->ignore($productId)],
+            'sku' => ['required', 'string', 'max:255', Rule::unique('products', 'sku')->ignore($product)],
             'image' => ['nullable', 'file', 'image'],
             'price' => ['required', 'numeric', 'min:0'],
             'state' => ['required', 'string', 'in:'.implode(',', array_keys(Product::$states))],

@@ -16,19 +16,19 @@ Route::get('/dashboard', [DashboardController::class, 'show'])->middleware('auth
 Route::prefix('offers')->name('offers.')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/create', [OfferController::class, 'create'])->name('create');
     Route::post('/', [OfferController::class, 'store'])->name('store');
-    Route::get('/{offerId}', [OfferController::class, 'show'])->name('show');
-    Route::get('/{offerId}/edit', [OfferController::class, 'edit'])->name('edit');
-    Route::patch('/{offerId}', [OfferController::class, 'update'])->name('update');
-    Route::delete('/{offerId}', [OfferController::class, 'destroy'])->name('destroy');
+    Route::get('/{offer}', [OfferController::class, 'show'])->name('show');
+    Route::get('/{offer}/edit', [OfferController::class, 'edit'])->name('edit');
+    Route::patch('/{offer}', [OfferController::class, 'update'])->name('update');
+    Route::delete('/{offer}', [OfferController::class, 'destroy'])->name('destroy');
 
     // Products management nested under offers
-    Route::prefix('{offerId}/products')->name('products.')->group(function () {
+    Route::prefix('{offer}/products')->name('products.')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('index');
         Route::get('/create', [ProductController::class, 'create'])->name('create');
         Route::post('/', [ProductController::class, 'store'])->name('store');
-        Route::get('/{productId}/edit', [ProductController::class, 'edit'])->name('edit');
-        Route::patch('/{productId}', [ProductController::class, 'update'])->name('update');
-        Route::delete('/{productId}', [ProductController::class, 'destroy'])->name('destroy');
+        Route::get('/{product:offer}/edit', [ProductController::class, 'edit'])->name('edit');
+        Route::patch('/{product:offer}', [ProductController::class, 'update'])->name('update');
+        Route::delete('/{product:offer}', [ProductController::class, 'destroy'])->name('destroy');
     });
 });
 
