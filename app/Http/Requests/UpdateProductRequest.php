@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
-use App\Enums\ProductState;
+use App\Domain\Enums\ProductState;
+use App\Http\Rules\PriceRule;
+use App\Http\Rules\SkuRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -20,9 +22,9 @@ class UpdateProductRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:255'],
-            'sku' => ['required', 'string', 'max:255', Rule::unique('products', 'sku')->ignore($product)],
+            'sku' => ['required', new SkuRule, Rule::unique('products', 'sku')->ignore($product)],
             'image' => ['nullable', 'file', 'image'],
-            'price' => ['required', 'numeric', 'min:0'],
+            'price' => ['required', new PriceRule],
             'state' => ['required', Rule::enum(ProductState::class)],
         ];
     }

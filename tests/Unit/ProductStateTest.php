@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use App\Enums\ProductState;
+use App\Domain\Enums\ProductState;
 use PHPUnit\Framework\TestCase;
 
 class ProductStateTest extends TestCase

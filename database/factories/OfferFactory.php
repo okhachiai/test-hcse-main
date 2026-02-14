@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\OfferState;
+use App\Domain\Enums\OfferState;
 use App\Models\Offer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;

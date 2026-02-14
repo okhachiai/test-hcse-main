@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\ListDashboardOffersAction;
+use App\Application\Actions\ListDashboardOffersAction;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 

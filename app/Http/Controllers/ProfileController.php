@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\DeleteUserAction;
-use App\Actions\UpdateProfileAction;
+use App\Application\Actions\DeleteUserAction;
+use App\Application\Actions\UpdateProfileAction;
 use App\Http\Requests\DeleteProfileRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;

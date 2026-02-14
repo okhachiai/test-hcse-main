@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
-use App\Actions\ListPublishedOffersAction;
-use App\Enums\Pagination;
+use App\Application\Actions\ListPublishedOffersAction;
+use App\Domain\Enums\Pagination;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use OpenApi\Attributes as OA;

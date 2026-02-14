@@ -1,11 +1,12 @@
 ## Architecture et décisions techniques
 
-### Structure générale
+### Structure générale (DDD light)
 
-- **Controllers** : restent fins, délèguent aux Actions et retournent la réponse (View, Redirect, JsonResponse).
-- **Actions** : logique métier atomique (CreateOffer, DeleteProduct, ListDashboardOffers…). Injectées via le container.
-- **Repositories** : accès aux données (OfferRepository, ProductRepository). Encapsulent les requêtes et scopes.
-- **Form Requests** : validation centralisée (StoreOfferRequest, UpdateProductRequest…) avec `Rule::enum()` pour les états.
+- **Domain** (`app/Domain/`) : Enums, Value Objects (Sku, Price), Specifications (OfferCanBePublishedSpecification). Code pur, sans dépendance framework.
+- **Application** (`app/Application/`) : Actions (use-cases), Data/DTOs, Contracts (interfaces des repositories).
+- **Infrastructure** (`app/Infrastructure/`) : Implémentations Eloquent (Repositories), QueryServices (OfferQueryService), ImageStorage.
+- **Controllers** : fins, délèguent aux Actions, retournent View/Redirect/JsonResponse.
+- **Form Requests** : validation avec Rules (SkuRule, PriceRule, OfferCanBePublishedRule), `Rule::enum()` pour les états.
 
 ### Enums
 
@@ -42,10 +43,11 @@
 - **Resources** : réponses API normalisées via OfferResource/ProductResource.
 - **Dashboard** : filtres (state, name, slug) + pagination avec préservation des query strings.
 - **Validation** : FormRequests avec `Rule::enum()`, règles partagées.
-- **Tests** : unitaires (scopes, repositories, ImageStorage, OfferState, ProductState), feature (API, dashboard, validation, console).
+- **Tests** : unitaires (scopes, repositories, ImageStorage, OfferState, ProductState, Sku, Price, OfferCanBePublishedSpecification, OfferQueryService), feature (API, dashboard, validation, console).
 - **PHPStan** : niveau 9, sans baseline, erreurs corrigées.
 - **CI** : GitHub Actions (lint Pint, PHPStan, tests) sur push/PR vers `main`.
 - **Bonus** : API rate limiting (60 req/min), ProductPolicy, règles de transition d’état dans les Enums.
+- **DDD light** : Domain (Enums, Sku, Price VOs, OfferCanBePublishedSpecification), Application (Actions, Contracts), Infrastructure (Repositories, OfferQueryService). Interfaces Repository + bindings.
 
 ---
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use App\Enums\OfferState;
+use App\Domain\Enums\OfferState;
 use PHPUnit\Framework\TestCase;
 
 class OfferStateTest extends TestCase

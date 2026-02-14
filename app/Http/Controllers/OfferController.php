@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\CreateOfferAction;
-use App\Actions\DeleteOfferAction;
-use App\Actions\ListProductsAction;
-use App\Actions\UpdateOfferAction;
+use App\Application\Actions\CreateOfferAction;
+use App\Application\Actions\DeleteOfferAction;
+use App\Application\Actions\ListProductsAction;
+use App\Application\Actions\UpdateOfferAction;
 use App\Http\Requests\StoreOfferRequest;
 use App\Http\Requests\UpdateOfferRequest;
 use App\Models\Offer;
