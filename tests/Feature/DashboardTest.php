@@ -90,9 +90,9 @@ class DashboardTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $old = Offer::factory()->for($user)->create(['name' => 'Oldest', 'created_at' => now()->subDays(2)]);
-        $mid = Offer::factory()->for($user)->create(['name' => 'Middle', 'created_at' => now()->subDay()]);
-        $new = Offer::factory()->for($user)->create(['name' => 'Newest', 'created_at' => now()]);
+        Offer::factory()->for($user)->create(['name' => 'Oldest', 'created_at' => now()->subDays(2)]);
+        Offer::factory()->for($user)->create(['name' => 'Middle', 'created_at' => now()->subDay()]);
+        Offer::factory()->for($user)->create(['name' => 'Newest', 'created_at' => now()]);
 
         $response = $this->actingAs($user)->get(route('dashboard'));
 

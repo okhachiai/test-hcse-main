@@ -11,6 +11,6 @@ class OfferPolicy
 {
     public function manage(User $user, Offer $offer): bool
     {
-        return $user->is($offer->user);
+        return $offer->user_id === $user->id;
     }
 }

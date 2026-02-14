@@ -17,7 +17,10 @@ class ProductRepository
      */
     public function getForOffer(Offer $offer): Collection
     {
-        return $offer->products()->latest()->get();
+        $collection = $offer->products()->latest()->get();
+
+        /** @var Collection<int, Product> $collection */
+        return $collection;
     }
 
     public function getForOfferPaginated(Offer $offer, int $perPage = Pagination::DefaultPerPage->value): LengthAwarePaginator

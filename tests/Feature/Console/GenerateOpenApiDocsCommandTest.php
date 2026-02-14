@@ -6,6 +6,7 @@ namespace Tests\Feature\Console;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+use Override;
 use Tests\TestCase;
 
 class GenerateOpenApiDocsCommandTest extends TestCase
@@ -19,12 +20,13 @@ class GenerateOpenApiDocsCommandTest extends TestCase
         File::ensureDirectoryExists($this->outputDir);
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         $paths = [
-            $this->outputDir . '/openapi-test.json',
-            $this->outputDir . '/openapi-test.yaml',
-            $this->outputDir . '/custom-openapi.json',
+            $this->outputDir.'/openapi-test.json',
+            $this->outputDir.'/openapi-test.yaml',
+            $this->outputDir.'/custom-openapi.json',
         ];
         foreach ($paths as $path) {
             if (File::exists($path)) {
@@ -41,12 +43,12 @@ class GenerateOpenApiDocsCommandTest extends TestCase
         ]);
 
         $this->assertSame(0, $exitCode);
-        $this->assertFileExists($this->outputDir . '/openapi-test.json');
+        $this->assertFileExists($this->outputDir.'/openapi-test.json');
     }
 
     public function test_command_generates_valid_json_openapi_spec(): void
     {
-        $outputPath = $this->outputDir . '/openapi-test.json';
+        $outputPath = $this->outputDir.'/openapi-test.json';
 
         Artisan::call('openapi:generate', [
             '--output' => 'storage/framework/testing/openapi-test.json',
@@ -65,7 +67,7 @@ class GenerateOpenApiDocsCommandTest extends TestCase
 
     public function test_command_generates_yaml_when_format_option_is_yaml(): void
     {
-        $outputPath = $this->outputDir . '/openapi-test.yaml';
+        $outputPath = $this->outputDir.'/openapi-test.yaml';
 
         Artisan::call('openapi:generate', [
             '--output' => 'storage/framework/testing/openapi-test.yaml',
@@ -81,7 +83,7 @@ class GenerateOpenApiDocsCommandTest extends TestCase
 
     public function test_command_uses_custom_output_path(): void
     {
-        $customPath = $this->outputDir . '/custom-openapi.json';
+        $customPath = $this->outputDir.'/custom-openapi.json';
 
         Artisan::call('openapi:generate', [
             '--output' => 'storage/framework/testing/custom-openapi.json',

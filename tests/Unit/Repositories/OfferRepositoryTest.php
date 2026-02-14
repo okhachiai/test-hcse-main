@@ -8,6 +8,7 @@ use App\Models\Offer;
 use App\Models\Product;
 use App\Models\User;
 use App\Repositories\OfferRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -39,7 +40,7 @@ class OfferRepositoryTest extends TestCase
 
     public function test_find_or_fail_with_products_throws_when_offer_not_found(): void
     {
-        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        $this->expectException(ModelNotFoundException::class);
 
         $this->repository->findOrFailWithProducts(99999);
     }
