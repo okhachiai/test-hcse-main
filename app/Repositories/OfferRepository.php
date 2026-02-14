@@ -11,11 +11,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class OfferRepository
 {
-    public function findOrFail(int $id): Offer
-    {
-        return Offer::findOrFail($id);
-    }
-
     public function findOrFailWithProducts(int $id): Offer
     {
         return Offer::with('products')->findOrFail($id);

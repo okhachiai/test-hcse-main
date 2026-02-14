@@ -25,6 +25,8 @@ help:
 	@echo "  make assets-build  - Build les assets front"
 	@echo "  make assets-dev    - Lance Vite en mode dev"
 	@echo "  make test          - Lance les tests Laravel"
+	@echo "  make test-unit     - Lance les tests unitaires uniquement"
+	@echo "  make test-file FILE=filepath.php - Lance un fichier de test"
 	@echo "  make api-docs-link - Affiche l'URL de la doc Swagger"
 	@echo "  make openapi-docs  - Génère la doc OpenAPI depuis le code (attributs)"
 	@echo "  make lint          - Lance Pint (vérification style)"
@@ -90,6 +92,12 @@ assets-dev:
 
 test:
 	$(DOCKER_COMPOSE) run --rm $(APP_SERVICE) php artisan test
+
+test-unit:
+	$(DOCKER_COMPOSE) run --rm $(APP_SERVICE) php artisan test tests/Unit
+
+test-file:
+	$(DOCKER_COMPOSE) run --rm $(APP_SERVICE) php artisan test $(FILE)
 
 api-docs-link:
 	@echo "Documentation Swagger: http://localhost:8080/api-docs"
