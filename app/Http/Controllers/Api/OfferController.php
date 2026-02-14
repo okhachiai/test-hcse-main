@@ -12,28 +12,20 @@ use OpenApi\Attributes as OA;
 
 class OfferController extends Controller
 {
-    #[OA\Get(
-        path: '/offers',
-        summary: 'Liste des offres publiées',
-        description: 'Retourne la liste paginée des offres publiées avec leurs produits publiés.',
-        operationId: 'listOffers',
-        tags: ['Offres'],
-        parameters: [
-            new OA\QueryParameter(
-                name: 'page',
-                description: 'Numéro de page pour la pagination',
-                required: false,
-                schema: new OA\Schema(type: 'integer', minimum: 1, default: 1)
-            ),
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Liste des offres avec pagination',
-                content: new OA\JsonContent(ref: '#/components/schemas/OfferListResponse')
-            ),
-        ]
-    )]
+    #[OA\Get(path: '/offers', operationId: 'listOffers', description: 'Retourne la liste paginée des offres publiées avec leurs produits publiés.', summary: 'Liste des offres publiées', tags: ['Offres'], parameters: [
+        new OA\QueryParameter(
+            name: 'page',
+            description: 'Numéro de page pour la pagination',
+            required: false,
+            schema: new OA\Schema(type: 'integer', default: 1, minimum: 1)
+        ),
+    ], responses: [
+        new OA\Response(
+            response: 200,
+            description: 'Liste des offres avec pagination',
+            content: new OA\JsonContent(ref: '#/components/schemas/OfferListResponse')
+        ),
+    ])]
     public function index(
         ListPublishedOffersAction $listPublishedOffersAction
     ): AnonymousResourceCollection {

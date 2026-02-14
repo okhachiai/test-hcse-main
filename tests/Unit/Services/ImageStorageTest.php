@@ -18,7 +18,7 @@ class ImageStorageTest extends TestCase
         parent::setUp();
 
         Storage::fake('public');
-        $this->imageStorage = new ImageStorage();
+        $this->imageStorage = new ImageStorage;
     }
 
     public function test_store_creates_file_and_returns_path(): void

@@ -10,9 +10,9 @@ use Illuminate\Support\Str;
 
 class ImageStorage
 {
-    private const DISK = 'public';
+    private const string DISK = 'public';
 
-    private const PLACEHOLDER_PATHS = [
+    private const array PLACEHOLDER_PATHS = [
         'offers/placeholder.jpg',
         'products/placeholder.jpg',
     ];

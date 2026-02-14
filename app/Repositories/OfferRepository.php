@@ -33,8 +33,8 @@ class OfferRepository
 
     public function getPublishedPaginated(int $perPage = Pagination::DefaultPerPage->value): LengthAwarePaginator
     {
-        return $this->buildFilteredQuery('published', null, null)
-            ->with(['products' => fn ($q) => $q->where('state', 'published')])
+        return Offer::published()
+            ->with(['products' => fn ($q) => $q->published()])
             ->paginate($perPage);
     }
 

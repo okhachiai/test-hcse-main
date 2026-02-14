@@ -121,10 +121,10 @@ pint:
 pint-fix:
 	$(DOCKER_COMPOSE) run --rm $(APP_SERVICE) ./vendor/bin/pint
 
-rector-check:
+rector:
 	$(DOCKER_COMPOSE) run --rm $(APP_SERVICE) ./vendor/bin/rector process --dry-run
 
-rector:
+rector-fix:
 	$(DOCKER_COMPOSE) run --rm $(APP_SERVICE) ./vendor/bin/rector process
 
 quality: lint analyse test

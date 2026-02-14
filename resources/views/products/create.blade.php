@@ -44,7 +44,7 @@
                             <div>
                                 <label for="state" class="block text-sm font-medium text-gray-700 dark:text-gray-300">État</label>
                                 <select name="state" id="state" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
-                                    @foreach(\App\Models\Product::$states as $value => $label)
+                                    @foreach(\App\Enums\ProductState::labels() as $value => $label)
                                         <option value="{{ $value }}" @selected(old('state') === $value)>{{ $label }}</option>
                                     @endforeach
                                 </select>

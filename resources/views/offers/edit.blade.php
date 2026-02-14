@@ -52,9 +52,9 @@
                             <div>
                                 <x-input-label for="state" value="État" />
                                 <x-select id="state" name="state" class="mt-1 block w-full" required>
-                                    <option value="draft" @selected(old('state', $offer->state) == 'draft')>Brouillon</option>
-                                    <option value="published" @selected(old('state', $offer->state) == 'published')>Publié</option>
-                                    <option value="hidden" @selected(old('state', $offer->state) == 'hidden')>Masquée</option>
+                                    @foreach(\App\Enums\OfferState::labels() as $value => $label)
+                                        <option value="{{ $value }}" @selected(old('state', $offer->state->value) === $value)>{{ $label }}</option>
+                                    @endforeach
                                 </x-select>
                                 <x-input-error class="mt-2" :messages="$errors->get('state')" />
                             </div>

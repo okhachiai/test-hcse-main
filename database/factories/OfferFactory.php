@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\OfferState;
 use App\Models\Offer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -26,22 +27,22 @@ class OfferFactory extends Factory
             'slug' => Str::slug($name).'-'.fake()->unique()->numberBetween(1, 9999),
             'description' => fake()->optional(0.7)->sentence(),
             'image' => 'offers/placeholder.jpg',
-            'state' => fake()->randomElement(array_keys(Offer::$states)),
+            'state' => fake()->randomElement(array_map(fn (OfferState $c) => $c->value, OfferState::cases())),
         ];
     }
 
     public function draft(): static
     {
-        return $this->state(fn (array $attributes) => ['state' => 'draft']);
+        return $this->state(fn (array $attributes) => ['state' => OfferState::Draft->value]);
     }
 
     public function published(): static
     {
-        return $this->state(fn (array $attributes) => ['state' => 'published']);
+        return $this->state(fn (array $attributes) => ['state' => OfferState::Published->value]);
     }
 
     public function hidden(): static
     {
-        return $this->state(fn (array $attributes) => ['state' => 'hidden']);
+        return $this->state(fn (array $attributes) => ['state' => OfferState::Hidden->value]);
     }
 }

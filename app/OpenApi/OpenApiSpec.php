@@ -9,9 +9,9 @@ use OpenApi\Attributes as OA;
 #[OA\OpenApi(
     openapi: '3.0.3',
     info: new OA\Info(
-        title: 'HelloCSE API',
+        version: '1.0.0',
         description: "Documentation de l'API HelloCSE - Gestion des offres et produits",
-        version: '1.0.0'
+        title: 'HelloCSE API'
     ),
     servers: [new OA\Server(url: '/api', description: 'API locale')]
 )]

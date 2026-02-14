@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\ProductState;
 use App\Models\Offer;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -24,22 +25,22 @@ class ProductFactory extends Factory
             'sku' => strtoupper(fake()->unique()->bothify('SKU-####-????')),
             'image' => fake()->optional(0.8)->passthrough('products/placeholder.jpg'),
             'price' => fake()->randomFloat(2, 5, 500),
-            'state' => fake()->randomElement(array_keys(Product::$states)),
+            'state' => fake()->randomElement(array_map(fn (ProductState $c) => $c->value, ProductState::cases())),
         ];
     }
 
     public function draft(): static
     {
-        return $this->state(fn (array $attributes) => ['state' => 'draft']);
+        return $this->state(fn (array $attributes) => ['state' => ProductState::Draft->value]);
     }
 
     public function published(): static
     {
-        return $this->state(fn (array $attributes) => ['state' => 'published']);
+        return $this->state(fn (array $attributes) => ['state' => ProductState::Published->value]);
     }
 
     public function invisible(): static
     {
-        return $this->state(fn (array $attributes) => ['state' => 'invisible']);
+        return $this->state(fn (array $attributes) => ['state' => ProductState::Invisible->value]);
     }
 }

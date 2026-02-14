@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Enums\OfferState;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreOfferRequest extends FormRequest
 {
@@ -19,7 +21,7 @@ class StoreOfferRequest extends FormRequest
             'slug' => ['required', 'string', 'max:255', 'unique:offers,slug'],
             'image' => ['required', 'image'],
             'description' => ['nullable', 'string', 'max:255'],
-            'state' => ['required', 'string', 'in:draft,published,hidden'],
+            'state' => ['required', Rule::enum(OfferState::class)],
         ];
     }
 }
