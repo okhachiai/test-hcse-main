@@ -12,8 +12,13 @@ class DashboardController extends Controller
 {
     public function show(Request $request, ListDashboardOffersAction $listDashboardOffersAction): View
     {
+        $dashboardData = $listDashboardOffersAction->execute($request);
+
         return view('dashboard', [
-            'offers' => $listDashboardOffersAction->execute($request),
+            'offers' => $dashboardData->offers,
+            'filterParams' => $dashboardData->filterParams,
+            'activeState' => $dashboardData->activeState,
+            'offerStates' => $dashboardData->offerStates,
         ]);
     }
 }

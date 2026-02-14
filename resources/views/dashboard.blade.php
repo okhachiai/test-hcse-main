@@ -36,7 +36,7 @@
                                 />
                             </div>
                             <div class="pt-4">
-                                <x-secondary-button>Filtrer</x-secondary-button>
+                                <x-secondary-button type="submit">Filtrer</x-secondary-button>
                             </div>
                         </div>
                         <input type="hidden" name="state" value="{{ request('state') }}">
@@ -44,13 +44,13 @@
 
                     <div class="flex h-8">
                         <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                            <x-nav-link :href="route('dashboard')" :active="request('state') == null">
+                            <x-nav-link :href="route('dashboard', $filterParams)" :active="$activeState === null">
                                 Tous
                             </x-nav-link>
                         </div>
-                        @foreach(\App\Enums\OfferState::labels() as $state => $label)
+                        @foreach($offerStates as $state => $label)
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <x-nav-link :href="route('dashboard', ['state' => $state])" :active="request('state') == $state">
+                                <x-nav-link :href="route('dashboard', [...$filterParams, 'state' => $state])" :active="$activeState === $state">
                                     {{ $label }}
                                 </x-nav-link>
                             </div>
