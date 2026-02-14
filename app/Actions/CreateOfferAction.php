@@ -7,18 +7,15 @@ namespace App\Actions;
 use App\Http\Requests\StoreOfferRequest;
 use App\Repositories\OfferRepository;
 use App\Services\ImageStorage;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
 
 readonly class CreateOfferAction
 {
     public function __construct(
         private OfferRepository $offerRepository,
-        private ImageStorage $imageStorage,
-        private Redirector $redirector
+        private ImageStorage $imageStorage
     ) {}
 
-    public function execute(StoreOfferRequest $request): RedirectResponse
+    public function execute(StoreOfferRequest $request): void
     {
         $data = [
             'user_id' => $request->user()->id,
@@ -30,7 +27,5 @@ readonly class CreateOfferAction
         ];
 
         $this->offerRepository->create($data);
-
-        return $this->redirector->route('dashboard');
     }
 }

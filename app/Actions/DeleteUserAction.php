@@ -9,17 +9,15 @@ use Illuminate\Support\Facades\Auth;
 
 readonly class DeleteUserAction
 {
-    public function execute(DeleteProfileRequest $request): ?bool
+    public function execute(DeleteProfileRequest $request): void
     {
         $user = $request->user();
 
         Auth::logout();
 
-        $deleted = $user->delete();
+        $user->delete();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
-        return $deleted;
     }
 }

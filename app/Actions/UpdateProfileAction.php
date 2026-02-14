@@ -6,8 +6,6 @@ namespace App\Actions;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
 
 readonly class UpdateProfileAction
 {

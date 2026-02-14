@@ -9,18 +9,15 @@ use App\Models\Offer;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
 use App\Services\ImageStorage;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
 
 readonly class UpdateProductAction
 {
     public function __construct(
         private ProductRepository $productRepository,
-        private ImageStorage $imageStorage,
-        private Redirector $redirector
+        private ImageStorage $imageStorage
     ) {}
 
-    public function execute(UpdateProductRequest $request, Offer $offer, Product $product): RedirectResponse
+    public function execute(UpdateProductRequest $request, Offer $offer, Product $product): void
     {
         $data = [
             'name' => $request->validated('name'),
@@ -34,9 +31,5 @@ readonly class UpdateProductAction
         }
 
         $this->productRepository->update($product, $data);
-
-        return $this->redirector
-            ->route('offers.products.index', $offer)
-            ->with('status', 'Produit mis à jour avec succès.');
     }
 }

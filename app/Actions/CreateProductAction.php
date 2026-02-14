@@ -8,18 +8,15 @@ use App\Http\Requests\StoreProductRequest;
 use App\Models\Offer;
 use App\Repositories\ProductRepository;
 use App\Services\ImageStorage;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
 
 readonly class CreateProductAction
 {
     public function __construct(
         private ProductRepository $productRepository,
-        private ImageStorage $imageStorage,
-        private Redirector $redirector
+        private ImageStorage $imageStorage
     ) {}
 
-    public function execute(StoreProductRequest $request, Offer $offer): RedirectResponse
+    public function execute(StoreProductRequest $request, Offer $offer): void
     {
         $data = [
             'name' => $request->validated('name'),
@@ -30,9 +27,5 @@ readonly class CreateProductAction
         ];
 
         $this->productRepository->create($offer, $data);
-
-        return $this->redirector
-            ->route('offers.products.index', $offer)
-            ->with('status', 'Produit créé avec succès.');
     }
 }

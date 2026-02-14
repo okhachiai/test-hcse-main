@@ -13,6 +13,7 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\Offer;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -41,7 +42,9 @@ class ProductController extends Controller
     {
         $this->authorize('manage', $offer);
 
-        return $createProductAction->execute($request, $offer);
+        $createProductAction->execute($request, $offer);
+
+        return Redirect::route('offers.products.index', $offer)->with('status', 'Produit créé avec succès.');
     }
 
     public function edit(Offer $offer, Product $product): View
@@ -55,13 +58,17 @@ class ProductController extends Controller
     {
         $this->authorize('manage', $offer);
 
-        return $updateProductAction->execute($request, $offer, $product);
+        $updateProductAction->execute($request, $offer, $product);
+
+        return Redirect::route('offers.products.index', $offer)->with('status', 'Produit mis à jour avec succès.');
     }
 
     public function destroy(DeleteProductAction $deleteProductAction, Offer $offer, Product $product): RedirectResponse
     {
         $this->authorize('manage', $offer);
 
-        return $deleteProductAction->execute($offer, $product);
+        $deleteProductAction->execute($product);
+
+        return Redirect::route('offers.products.index', $offer)->with('status', 'Produit supprimé avec succès.');
     }
 }

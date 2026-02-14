@@ -12,6 +12,7 @@ use App\Http\Requests\StoreOfferRequest;
 use App\Http\Requests\UpdateOfferRequest;
 use App\Models\Offer;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
 class OfferController extends Controller
@@ -23,7 +24,9 @@ class OfferController extends Controller
 
     public function store(StoreOfferRequest $request, CreateOfferAction $createOfferAction): RedirectResponse
     {
-        return $createOfferAction->execute($request);
+        $createOfferAction->execute($request);
+
+        return Redirect::route('dashboard');
     }
 
     public function edit(Offer $offer): View
@@ -37,14 +40,18 @@ class OfferController extends Controller
     {
         $this->authorize('manage', $offer);
 
-        return $updateOfferAction->execute($request, $offer);
+        $updateOfferAction->execute($request, $offer);
+
+        return Redirect::route('dashboard');
     }
 
     public function destroy(DeleteOfferAction $deleteOfferAction, Offer $offer): RedirectResponse
     {
         $this->authorize('manage', $offer);
 
-        return $deleteOfferAction->execute($offer);
+        $deleteOfferAction->execute($offer);
+
+        return Redirect::route('dashboard');
     }
 
     public function show(ListProductsAction $listProductsAction, Offer $offer): View

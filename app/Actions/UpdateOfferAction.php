@@ -8,18 +8,15 @@ use App\Http\Requests\UpdateOfferRequest;
 use App\Models\Offer;
 use App\Repositories\OfferRepository;
 use App\Services\ImageStorage;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
 
 readonly class UpdateOfferAction
 {
     public function __construct(
         private OfferRepository $offerRepository,
-        private ImageStorage $imageStorage,
-        private Redirector $redirector
+        private ImageStorage $imageStorage
     ) {}
 
-    public function execute(UpdateOfferRequest $request, Offer $offer): RedirectResponse
+    public function execute(UpdateOfferRequest $request, Offer $offer): void
     {
         $data = [
             'name' => $request->validated('name'),
@@ -33,7 +30,5 @@ readonly class UpdateOfferAction
         }
 
         $this->offerRepository->update($offer, $data);
-
-        return $this->redirector->route('dashboard');
     }
 }
