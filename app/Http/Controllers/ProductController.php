@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\CreateProductAction;
+use App\Actions\UpdateProductAction;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Offer;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -15,6 +18,8 @@ class ProductController extends Controller
     public function index(string $offerId): View
     {
         $offer = Offer::findOrFail($offerId);
+        $this->authorize('view', $offer);
+
         $products = $offer->products()->latest()->get();
 
         return view('products.index', ['offer' => $offer, 'products' => $products]);
@@ -23,71 +28,44 @@ class ProductController extends Controller
     public function create(string $offerId): View
     {
         $offer = Offer::findOrFail($offerId);
+        $this->authorize('update', $offer);
+
         $product = new Product;
 
         return view('products.create', ['offer' => $offer, 'product' => $product]);
     }
 
-    public function store(Request $request, string $offerId): RedirectResponse
+    public function store(StoreProductRequest $request, CreateProductAction $createProductAction, string $offerId): RedirectResponse
     {
         $offer = Offer::findOrFail($offerId);
+        $this->authorize('update', $offer);
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'sku' => ['required', 'string', 'max:255', 'unique:products,sku'],
-            'image' => ['required', 'file'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'state' => ['required', 'in:'.implode(',', array_keys(Product::$states))],
-        ]);
-
-        $product = new Product($data);
-        $product->offer_id = $offer->id;
-        $product->save();
-
-        if ($request->hasFile('image')) {
-            $product->update(['image' => $request->file('image')->store('products', ['disk' => 'public'])]);
-        }
-
-        return redirect()
-            ->route('offers.products.index', $offer->id)
-            ->with('status', 'Produit créé avec succès.');
+        return $createProductAction->execute($request, (int) $offerId);
     }
 
     public function edit(string $offerId, string $productId): View
     {
         $offer = Offer::findOrFail($offerId);
+        $this->authorize('update', $offer);
+
         $product = $offer->products()->findOrFail($productId);
 
         return view('products.edit', ['offer' => $offer, 'product' => $product]);
     }
 
-    public function update(Request $request, string $offerId, string $productId): RedirectResponse
+    public function update(UpdateProductRequest $request, UpdateProductAction $updateProductAction, string $offerId, string $productId): RedirectResponse
     {
         $offer = Offer::findOrFail($offerId);
-        $product = $offer->products()->findOrFail($productId);
+        $this->authorize('update', $offer);
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'sku' => ['required', 'string', 'max:255', 'unique:products,sku,'.$product->id],
-            'image' => ['nullable', 'file'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'state' => ['required', 'in:'.implode(',', array_keys(Product::$states))],
-        ]);
-
-        $product->update($data);
-
-        if ($request->hasFile('image')) {
-            $product->update(['image' => $request->file('image')->store('products', ['disk' => 'public'])]);
-        }
-
-        return redirect()
-            ->route('offers.products.index', $offer->id)
-            ->with('status', 'Produit mis à jour avec succès.');
+        return $updateProductAction->execute($request, (int) $offerId, (int) $productId);
     }
 
     public function destroy(string $offerId, string $productId): RedirectResponse
     {
         $offer = Offer::findOrFail($offerId);
+        $this->authorize('update', $offer);
+
         $product = $offer->products()->findOrFail($productId);
         $product->delete();
 

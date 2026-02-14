@@ -4,24 +4,62 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Enums\Pagination;
 use App\Models\Offer;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 
 class OfferRepository
 {
-    public function getPublishedPaginated(int $perPage = 15): LengthAwarePaginator
+    public function findOrFail(int $id): Offer
     {
-        return Offer::ofState('published')
+        return Offer::findOrFail($id);
+    }
+
+    public function findOrFailWithProducts(int $id): Offer
+    {
+        return Offer::with('products')->findOrFail($id);
+    }
+
+    public function create(array $data): Offer
+    {
+        return Offer::create($data);
+    }
+
+    public function update(Offer $offer, array $data): bool
+    {
+        return $offer->update($data);
+    }
+
+    public function delete(int $id): bool
+    {
+        return Offer::where('id', $id)->delete() > 0;
+    }
+
+    public function getPublishedPaginated(int $perPage = Pagination::DefaultPerPage->value): LengthAwarePaginator
+    {
+        return $this->buildFilteredQuery('published', null, null)
             ->with(['products' => fn ($q) => $q->where('state', 'published')])
             ->paginate($perPage);
     }
 
+    public function getFiltered(?string $state = null, ?string $name = null, ?string $slug = null, ?int $userId = null, int $perPage = Pagination::DefaultPerPage->value): LengthAwarePaginator
+    {
+        return $this->buildFilteredQuery($state, $name, $slug, $userId)
+            ->paginate($perPage)
+            ->withQueryString();
+    }
+
     /**
-     * @return LengthAwarePaginator<Offer>
+     * @return Builder<Offer>
      */
-    public function getFiltered(?string $state = null, ?string $name = null, ?string $slug = null, int $perPage = 15): LengthAwarePaginator
+    private function buildFilteredQuery(?string $state = null, ?string $name = null, ?string $slug = null, ?int $userId = null): Builder
     {
         $query = Offer::query();
+
+        if ($userId !== null) {
+            $query->where('user_id', $userId);
+        }
 
         if ($state !== null && $state !== '') {
             $query->ofState($state);
@@ -35,6 +73,6 @@ class OfferRepository
             $query->where('slug', 'like', "%{$slug}%");
         }
 
-        return $query->paginate($perPage)->withQueryString();
+        return $query;
     }
 }

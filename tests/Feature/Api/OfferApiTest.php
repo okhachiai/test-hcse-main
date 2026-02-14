@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api;
 
+use App\Enums\Pagination;
 use App\Models\Offer;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -63,7 +64,7 @@ class OfferApiTest extends TestCase
                 'total',
             ],
         ]);
-        $this->assertSame(15, $response->json('meta.per_page'));
+        $this->assertSame(Pagination::DefaultPerPage->value, $response->json('meta.per_page'));
     }
 
     public function test_api_does_not_leak_internal_fields(): void

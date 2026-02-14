@@ -19,12 +19,18 @@ class Offer extends Model
     ];
 
     protected $fillable = [
+        'user_id',
         'name',
         'slug',
         'image',
         'description',
         'state',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     #[Scope]
     protected function ofState($query, $state)

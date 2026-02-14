@@ -21,6 +21,7 @@ class OfferFactory extends Factory
         $name = fake()->words(3, true);
 
         return [
+            'user_id' => \App\Models\User::factory(),
             'name' => ucfirst($name),
             'slug' => Str::slug($name).'-'.fake()->unique()->numberBetween(1, 9999),
             'description' => fake()->optional(0.7)->sentence(),

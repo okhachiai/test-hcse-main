@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\Enums\Pagination;
 use App\Http\Resources\OfferResource;
 use App\Repositories\OfferRepository;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -14,7 +15,7 @@ class ListPublishedOffersAction
         private readonly OfferRepository $offerRepository
     ) {}
 
-    public function execute(int $perPage = 15): AnonymousResourceCollection
+    public function execute(int $perPage = Pagination::DefaultPerPage->value): AnonymousResourceCollection
     {
         $offers = $this->offerRepository->getPublishedPaginated($perPage);
 

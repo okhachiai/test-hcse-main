@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Actions\ListPublishedOffersAction;
+use App\Enums\Pagination;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use OpenApi\Attributes as OA;
@@ -36,6 +37,6 @@ class OfferController extends Controller
     public function index(
         ListPublishedOffersAction $listPublishedOffersAction
     ): AnonymousResourceCollection {
-        return $listPublishedOffersAction->execute(15);
+        return $listPublishedOffersAction->execute(Pagination::DefaultPerPage->value);
     }
 }

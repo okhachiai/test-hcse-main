@@ -34,8 +34,9 @@
 
                             <div>
                                 <x-input-label for="image" value="Image" />
-                                <img src="{{ asset('storage/' . $offer->image) }}" alt="{{ $offer->name }}" class="margin-x-auto h-20" />
-                                <x-file-input id="image" name="image" class="mt-1 block w-full" required />
+                                <img src="{{ asset('storage/' . $offer->image) }}" alt="{{ $offer->name }}" class="margin-x-auto h-20 mt-2" />
+                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Laisser vide pour conserver l'image actuelle.</p>
+                                <x-file-input id="image" name="image" class="mt-1 block w-full" />
                                 <x-input-error class="mt-2" :messages="$errors->get('image')" />
                             </div>
 

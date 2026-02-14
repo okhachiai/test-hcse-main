@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Offer;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 
@@ -12,9 +13,17 @@ class OfferSeeder extends Seeder
     {
         $this->createPlaceholderImages();
 
-        Offer::factory(50)->published()->create();
-        Offer::factory(30)->draft()->create();
-        Offer::factory(20)->hidden()->create();
+        $users = User::all();
+
+        if ($users->isEmpty()) {
+            return;
+        }
+
+        foreach ($users as $user) {
+            Offer::factory(50)->published()->for($user)->create();
+            Offer::factory(30)->draft()->for($user)->create();
+            Offer::factory(20)->hidden()->for($user)->create();
+        }
     }
 
     private function createPlaceholderImages(): void

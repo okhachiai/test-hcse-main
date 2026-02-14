@@ -4,73 +4,57 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\CreateOfferAction;
+use App\Actions\DeleteOfferAction;
+use App\Actions\EditOfferAction;
+use App\Actions\ShowOfferAction;
+use App\Actions\UpdateOfferAction;
+use App\Http\Requests\StoreOfferRequest;
+use App\Http\Requests\UpdateOfferRequest;
 use App\Models\Offer;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class OfferController extends Controller
 {
-    public function create()
+    public function create(): View
     {
         return view('offers.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreOfferRequest $request, CreateOfferAction $createOfferAction): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', 'unique:offers,slug'],
-            'image' => ['required', 'image'],
-            'description' => ['nullable', 'string', 'max:255'],
-            'state' => ['required', 'string', 'in:draft,published,hidden'],
-        ]);
-
-        Offer::create([
-            'name' => $request->name,
-            'slug' => $request->slug,
-            'image' => $request->image->store('offers', ['disk' => 'public']),
-            'description' => $request->description,
-            'state' => $request->state,
-        ]);
-
-        return redirect()->route('dashboard');
+        return $createOfferAction->execute($request);
     }
 
-    public function edit($offerId)
+    public function edit(EditOfferAction $editOfferAction, string $offerId): View
     {
-        return view('offers.edit', [
-            'offer' => Offer::find($offerId),
-        ]);
+        $offer = $editOfferAction->execute((int) $offerId);
+        $this->authorize('update', $offer);
+
+        return view('offers.edit', ['offer' => $offer]);
     }
 
-    public function update(Request $request, $offerId)
+    public function update(UpdateOfferRequest $request, UpdateOfferAction $updateOfferAction, string $offerId): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255'],
-            'image' => ['required', 'file'],
-            'description' => ['nullable', 'string', 'max:255'],
-            'state' => ['required', 'string', 'in:draft,published,hidden'],
-        ]);
+        $offer = Offer::findOrFail((int) $offerId);
+        $this->authorize('update', $offer);
 
-        Offer::find($offerId)->update($request->all('name', 'slug', 'description', 'state'));
-
-        if ($request->hasFile('image')) {
-            Offer::find($offerId)->update(['image' => $request->file('image')->store('offers', ['disk' => 'public'])]);
-        }
-
-        return redirect()->route('dashboard');
+        return $updateOfferAction->execute($request, (int) $offerId);
     }
 
-    public function destroy($offerId)
+    public function destroy(DeleteOfferAction $deleteOfferAction, string $offerId): RedirectResponse
     {
-        Offer::where('id', $offerId)->delete();
+        $offer = Offer::findOrFail((int) $offerId);
+        $this->authorize('delete', $offer);
 
-        return redirect()->route('dashboard');
+        return $deleteOfferAction->execute((int) $offerId);
     }
 
-    public function show(string $offerId)
+    public function show(ShowOfferAction $showOfferAction, string $offerId): View
     {
-        $offer = Offer::with('products')->findOrFail($offerId);
+        $offer = $showOfferAction->execute((int) $offerId);
+        $this->authorize('view', $offer);
 
         return view('offers.show', ['offer' => $offer]);
     }
