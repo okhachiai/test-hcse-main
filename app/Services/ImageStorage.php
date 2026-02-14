@@ -7,6 +7,7 @@ namespace App\Services;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 class ImageStorage
 {
@@ -21,7 +22,13 @@ class ImageStorage
     {
         $filename = Str::uuid()->toString().'.'.$file->extension();
 
-        return $file->storeAs($directory, $filename, ['disk' => self::DISK]);
+        $path = $file->storeAs($directory, $filename, ['disk' => self::DISK]);
+
+        if ($path === false) {
+            throw new RuntimeException("Failed to store file in directory: {$directory}");
+        }
+
+        return $path;
     }
 
     public function replace(?string $oldPath, UploadedFile $file, string $directory): string

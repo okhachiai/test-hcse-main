@@ -20,6 +20,7 @@ class OfferFactory extends Factory
     public function definition(): array
     {
         $name = fake()->words(3, true);
+        $name = is_string($name) ? $name : implode(' ', $name);
 
         return [
             'user_id' => \App\Models\User::factory(),

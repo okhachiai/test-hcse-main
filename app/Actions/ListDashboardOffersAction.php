@@ -8,6 +8,7 @@ use App\Data\DashboardData;
 use App\Enums\OfferState;
 use App\Enums\Pagination;
 use App\Repositories\OfferRepository;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 
 readonly class ListDashboardOffersAction
@@ -22,7 +23,7 @@ readonly class ListDashboardOffersAction
             state: $request->query('state'),
             name: $request->query('name'),
             slug: $request->query('slug'),
-            userId: $request->user()->id,
+            userId: (auth()->user() ?? throw new AuthenticationException)->id,
             perPage: $perPage
         );
 

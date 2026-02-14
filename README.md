@@ -156,7 +156,7 @@ Bon courage et merci !
 - **Dashboard** : filtres (state, name, slug) + pagination avec préservation des query strings.
 - **Validation** : FormRequests avec `Rule::enum()`, règles partagées.
 - **Tests** : unitaires (scopes, repositories, ImageStorage), feature (API, dashboard, validation, console).
-- **PHPStan** : niveau 5, sans baseline, erreurs corrigées.
+- **PHPStan** : niveau 9, sans baseline, erreurs corrigées.
 
 ---
 
@@ -165,7 +165,6 @@ Bon courage et merci !
 **Temps passé : 6h**
 
 **Avec plus de temps, j'aurais :**
-- Monter PHPStan au niveau 8 (ou 9) comme demandé
 - Mettre en place une CI (GitHub Actions) exécutant lint + analyse + tests
 - Augmenter la couverture de tests sur les actions et repositories
 - Introduire des jobs asynchrones pour le traitement des images (resize, optimisation)

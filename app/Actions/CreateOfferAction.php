@@ -7,6 +7,7 @@ namespace App\Actions;
 use App\Http\Requests\StoreOfferRequest;
 use App\Repositories\OfferRepository;
 use App\Services\ImageStorage;
+use Illuminate\Auth\AuthenticationException;
 
 readonly class CreateOfferAction
 {
@@ -18,7 +19,7 @@ readonly class CreateOfferAction
     public function execute(StoreOfferRequest $request): void
     {
         $data = [
-            'user_id' => $request->user()->id,
+            'user_id' => (auth()->user() ?? throw new AuthenticationException)->id,
             'name' => $request->validated('name'),
             'slug' => $request->validated('slug'),
             'image' => $this->imageStorage->store($request->file('image'), 'offers'),

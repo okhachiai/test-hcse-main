@@ -23,6 +23,9 @@ class ProductRepository
         return $collection;
     }
 
+    /**
+     * @return LengthAwarePaginator<int, Product>
+     */
     public function getForOfferPaginated(Offer $offer, int $perPage = Pagination::DefaultPerPage->value): LengthAwarePaginator
     {
         return $offer->products()
@@ -31,15 +34,22 @@ class ProductRepository
             ->withQueryString();
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function create(Offer $offer, array $data): Product
     {
         $product = new Product($data);
-        $product->offer_id = $offer->id;
+        $key = $offer->getKey();
+        $product->offer_id = max(0, is_int($key) ? $key : (is_string($key) ? (int) $key : 0));
         $product->save();
 
         return $product;
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function update(Product $product, array $data): bool
     {
         return $product->update($data);
@@ -47,6 +57,6 @@ class ProductRepository
 
     public function delete(Product $product): bool
     {
-        return $product->delete();
+        return (bool) $product->delete();
     }
 }

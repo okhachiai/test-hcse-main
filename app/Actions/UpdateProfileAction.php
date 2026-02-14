@@ -6,12 +6,13 @@ namespace App\Actions;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
+use Illuminate\Auth\AuthenticationException;
 
 readonly class UpdateProfileAction
 {
     public function execute(ProfileUpdateRequest $request): User
     {
-        $user = $request->user();
+        $user = auth()->user() ?? throw new AuthenticationException;
         $user->fill($request->validated());
 
         if ($user->isDirty('email')) {

@@ -7,6 +7,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Override;
@@ -51,7 +52,10 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    public function offers()
+    /**
+     * @return HasMany<Offer, $this>
+     */
+    public function offers(): HasMany
     {
         return $this->hasMany(Offer::class);
     }

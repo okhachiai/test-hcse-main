@@ -16,11 +16,17 @@ class OfferRepository
         return Offer::with('products')->findOrFail($id);
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function create(array $data): Offer
     {
         return Offer::create($data);
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function update(Offer $offer, array $data): bool
     {
         return $offer->update($data);
@@ -31,6 +37,9 @@ class OfferRepository
         return Offer::where('id', $id)->delete() > 0;
     }
 
+    /**
+     * @return LengthAwarePaginator<int, Offer>
+     */
     public function getPublishedPaginated(int $perPage = Pagination::DefaultPerPage->value): LengthAwarePaginator
     {
         return Offer::published()
@@ -39,6 +48,9 @@ class OfferRepository
             ->paginate($perPage);
     }
 
+    /**
+     * @return LengthAwarePaginator<int, Offer>
+     */
     public function getFiltered(?string $state = null, ?string $name = null, ?string $slug = null, ?int $userId = null, int $perPage = Pagination::DefaultPerPage->value): LengthAwarePaginator
     {
         return $this->buildFilteredQuery($state, $name, $slug, $userId)

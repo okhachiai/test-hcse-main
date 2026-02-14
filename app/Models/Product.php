@@ -5,14 +5,20 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\ProductState;
+use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Override;
 
+/**
+ * @phpstan-type TFactory ProductFactory
+ */
 class Product extends Model
 {
+    /** @use HasFactory<TFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -35,7 +41,10 @@ class Product extends Model
         ];
     }
 
-    public function offer()
+    /**
+     * @return BelongsTo<Offer, $this>
+     */
+    public function offer(): BelongsTo
     {
         return $this->belongsTo(Offer::class);
     }
