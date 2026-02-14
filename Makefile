@@ -4,7 +4,7 @@ DB_SERVICE := db
 
 .PHONY: help build up down restart ps logs clean \
 	init install deps keygen migrate seed fresh storage-link \
-	assets-build assets-dev test lint analyse phpstan pint pint-fix rector-check rector quality wait-db \
+	assets-build assets-dev test test-unit test-file coverage lint analyse phpstan pint pint-fix rector-check rector quality wait-db \
 	openapi-docs api-docs shell db-shell artisan composer npm
 
 help:
@@ -27,6 +27,7 @@ help:
 	@echo "  make test          - Lance les tests Laravel"
 	@echo "  make test-unit     - Lance les tests unitaires uniquement"
 	@echo "  make test-file FILE=filepath.php - Lance un fichier de test"
+	@echo "  make coverage      - Génère le rapport de couverture HTML (build/coverage/)"
 	@echo "  make api-docs-link - Affiche l'URL de la doc Swagger"
 	@echo "  make openapi-docs  - Génère la doc OpenAPI depuis le code (attributs)"
 	@echo "  make lint          - Lance Pint (vérification style)"
@@ -98,6 +99,10 @@ test-unit:
 
 test-file:
 	$(DOCKER_COMPOSE) run --rm $(APP_SERVICE) php artisan test $(FILE)
+
+coverage:
+	$(DOCKER_COMPOSE) run --rm $(APP_SERVICE) php artisan test --coverage --coverage-html=build/coverage
+	@echo "Rapport HTML: build/coverage/index.html"
 
 api-docs-link:
 	@echo "Documentation Swagger: http://localhost:8080/api-docs"

@@ -30,6 +30,11 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     pdo_mysql \
     zip
 
+RUN apk add --no-cache $PHPIZE_DEPS \
+    && pecl install pcov \
+    && docker-php-ext-enable pcov \
+    && apk del $PHPIZE_DEPS
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 RUN addgroup -g "${GID}" app \
