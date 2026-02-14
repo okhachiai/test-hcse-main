@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Offer;
@@ -15,14 +17,15 @@ class ProductController extends Controller
         $offer = Offer::findOrFail($offerId);
         $products = $offer->products()->latest()->get();
 
-        return view('products.index', compact('offer', 'products'));
+        return view('products.index', ['offer' => $offer, 'products' => $products]);
     }
 
     public function create(string $offerId): View
     {
         $offer = Offer::findOrFail($offerId);
-        $product = new Product();
-        return view('products.create', compact('offer', 'product'));
+        $product = new Product;
+
+        return view('products.create', ['offer' => $offer, 'product' => $product]);
     }
 
     public function store(Request $request, string $offerId): RedirectResponse
@@ -34,7 +37,7 @@ class ProductController extends Controller
             'sku' => ['required', 'string', 'max:255', 'unique:products,sku'],
             'image' => ['required', 'file'],
             'price' => ['required', 'numeric', 'min:0'],
-            'state' => ['required', 'in:' . implode(',', array_keys(Product::$states))],
+            'state' => ['required', 'in:'.implode(',', array_keys(Product::$states))],
         ]);
 
         $product = new Product($data);
@@ -54,7 +57,8 @@ class ProductController extends Controller
     {
         $offer = Offer::findOrFail($offerId);
         $product = $offer->products()->findOrFail($productId);
-        return view('products.edit', compact('offer', 'product'));
+
+        return view('products.edit', ['offer' => $offer, 'product' => $product]);
     }
 
     public function update(Request $request, string $offerId, string $productId): RedirectResponse
@@ -64,10 +68,10 @@ class ProductController extends Controller
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'sku' => ['required', 'string', 'max:255', 'unique:products,sku,' . $product->id],
+            'sku' => ['required', 'string', 'max:255', 'unique:products,sku,'.$product->id],
             'image' => ['nullable', 'file'],
             'price' => ['required', 'numeric', 'min:0'],
-            'state' => ['required', 'in:' . implode(',', array_keys(Product::$states))],
+            'state' => ['required', 'in:'.implode(',', array_keys(Product::$states))],
         ]);
 
         $product->update($data);

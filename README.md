@@ -80,7 +80,7 @@ Bon courage et merci !
 
 ## Environnement et installation
 Prérequis
-- PHP 8.4+
+- PHP 8.5+
 - Composer 2
 - Node 18+ et npm
 - MySQL/MariaDB (ou SQLite si vous préférez pour l’exercice)
@@ -104,15 +104,22 @@ Prérequis
 7. Lancer l’application
    - php artisan serve (ou via votre stack locale)
 
-Étapes avec Sail (optionnel)
-1. composer install && cp .env.example .env
-2. ./vendor/bin/sail up -d
-3. ./vendor/bin/sail artisan key:generate
-4. ./vendor/bin/sail artisan migrate --seed
-5. ./vendor/bin/sail artisan storage:link
-6. ./vendor/bin/sail npm ci && ./vendor/bin/sail npm run build
+Étapes avec Docker (compose)
+1. cp .env.example .env && docker compose build app
+2. docker compose up -d db
+3. docker compose run --rm app composer install
+4. docker compose run --rm app php artisan key:generate
+5. docker compose run --rm app php artisan migrate --seed
+6. docker compose run --rm app php artisan storage:link
+7. docker compose run --rm app sh -c "npm ci && npm run build"
+8. docker compose up -d
 
 Tests et qualité
-- Lancer les tests: phpunit ou php artisan test
-- Lancer PHPStan: vendor/bin/phpstan analyse --level=8 (ajustez le niveau si vous visez plus)
+- `make lint` — Pint (style de code)
+- `make analyse` — Larastan/PHPStan (analyse statique, niveau 5)
+- `make test` — Tests PHPUnit
+- `make quality` — lint + analyse + test
+- `make pint-fix` — Corriger le style avec Pint
+- `make rector-check` / `make rector-fix` — Rector (refactoring automatique)
+- Composer: `composer lint`, `composer analyse`, `composer test`
 

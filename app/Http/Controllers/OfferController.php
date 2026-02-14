@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Offer;
@@ -70,6 +72,6 @@ class OfferController extends Controller
     {
         $offer = Offer::with('products')->findOrFail($offerId);
 
-        return view('offers.show', compact('offer'));
+        return view('offers.show', ['offer' => $offer]);
     }
 }

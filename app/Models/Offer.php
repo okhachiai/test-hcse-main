@@ -1,12 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Offer extends Model
 {
-    static $states = [
+    use HasFactory;
+
+    public static $states = [
         'draft' => 'Brouillon',
         'published' => 'Publié',
         'hidden' => 'Masqué',
@@ -20,7 +26,8 @@ class Offer extends Model
         'state',
     ];
 
-    public function scopeOfState($query, $state)
+    #[Scope]
+    protected function ofState($query, $state)
     {
         return $query->where('state', $state);
     }
