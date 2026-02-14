@@ -78,15 +78,109 @@ Si un point n’est pas clair, documentez vos hypothèses directement dans la PR
 
 Bon courage et merci !
 
+---
+
+## Architecture et décisions techniques
+
+### Structure générale
+
+- **Controllers** : restent fins, délèguent aux Actions et retournent la réponse (View, Redirect, JsonResponse).
+- **Actions** : logique métier atomique (CreateOffer, DeleteProduct, ListDashboardOffers…). Injectées via le container.
+- **Repositories** : accès aux données (OfferRepository, ProductRepository). Encapsulent les requêtes et scopes.
+- **Form Requests** : validation centralisée (StoreOfferRequest, UpdateProductRequest…) avec `Rule::enum()` pour les états.
+
+### Enums
+
+- **OfferState** / **ProductState** : backed enums (`draft`, `published`, `hidden`/`invisible`) avec `label()` et `labels()` pour l'UI. Remplacement des tableaux statiques côté modèles.
+- **Pagination** : valeurs par défaut (perPage). Utile pour l'API et la pagination.
+
+### ImageStorage
+
+- Service dédié au stockage des images : `store()`, `replace()`, `delete()`.
+- Utilise le disque `public`, génère des UUID pour éviter les collisions.
+- Gère le remplacement (nouveau fichier + suppression de l'ancien) et les placeholders.
+
+### API Resources
+
+- **OfferResource** / **ProductResource** : sérialisation des réponses API, exclusion des champs internes (state, timestamps, offer_id). Structure de réponse stable.
+
+### DTO / Data
+
+- **DashboardData** : objet readonly pour les données du dashboard (offers, filterParams, activeState, offerStates). Évite de passer des tableaux dans les vues.
+
+### Scopes et filtres
+
+- `published()`, `draft()`, `ofState()` : scopes Eloquent pour les états.
+- Dashboard : filtres par state, name, slug avec `withQueryString()` pour conserver les paramètres en pagination.
+
+---
+
+## Commandes (Makefile, via Docker)
+
+### Qualité de code
+
+| Commande | Description |
+|----------|-------------|
+| `make lint` | Pint — vérification du style (PSR-12) |
+| `make pint-fix` | Pint — correction automatique du style |
+| `make analyse` | PHPStan/Larastan — analyse statique (niveau 5) |
+| `make test` | PHPUnit — lancer tous les tests |
+| `make test-unit` | PHPUnit — tests unitaires uniquement |
+| `make coverage` | Génère le rapport de couverture HTML (`build/coverage/index.html`) |
+| `make quality` | `lint` + `analyse` + `test` |
+
+### Base de données
+
+| Commande | Description |
+|----------|-------------|
+| `make migrate` | Exécute les migrations |
+| `make seed` | Exécute les seeders |
+| `make fresh` | Reset DB + migrations + seeders |
+
+### Setup complet
+
+| Commande | Description |
+|----------|-------------|
+| `make init` | `.env`, build, up, wait-db, install, keygen, migrate:fresh --seed, storage-link, assets-build |
+| `make install` | `composer install` + `npm ci` |
+
+---
+
+## Ce qui a été modifié (résumé)
+
+- **Enums** : états typés (OfferState, ProductState) à la place de tableaux statiques.
+- **Actions** : logique métier extraite (Create, Update, Delete, List). Controllers allégés.
+- **Repositories** : requêtes encapsulées, scopes `published()`/`draft()`, tri `latest()` par défaut.
+- **ImageStorage** : service dédié pour stocker et remplacer les images.
+- **Resources** : réponses API normalisées via OfferResource/ProductResource.
+- **Dashboard** : filtres (state, name, slug) + pagination avec préservation des query strings.
+- **Validation** : FormRequests avec `Rule::enum()`, règles partagées.
+- **Tests** : unitaires (scopes, repositories, ImageStorage), feature (API, dashboard, validation, console).
+- **PHPStan** : niveau 5, sans baseline, erreurs corrigées.
+
+---
+
+## Temps passé et pistes d'amélioration
+
+**Temps passé : 6h**
+
+**Avec plus de temps, j'aurais :**
+- Monter PHPStan au niveau 8 (ou 9) comme demandé
+- Mettre en place une CI (GitHub Actions) exécutant lint + analyse + tests
+- Augmenter la couverture de tests sur les actions et repositories
+- Introduire des jobs asynchrones pour le traitement des images (resize, optimisation)
+- Ajouter des tests E2E (Dusk) pour les flux critiques du back-office
+
 ## Environnement et installation
-Prérequis
+
+### Prérequis
 - PHP 8.5+
 - Composer 2
 - Node 18+ et npm
 - MySQL/MariaDB (ou SQLite si vous préférez pour l’exercice)
 - Optionnel: Docker + Laravel Sail
 
-Étapes rapides (local hors Docker)
+### Étapes rapides (local hors Docker)
 1. Cloner le repo et installer les dépendances
    - composer install
    - npm ci
@@ -104,22 +198,28 @@ Prérequis
 7. Lancer l’application
    - php artisan serve (ou via votre stack locale)
 
-Étapes avec Docker (compose)
-1. cp .env.example .env && docker compose build app
-2. docker compose up -d db
-3. docker compose run --rm app composer install
-4. docker compose run --rm app php artisan key:generate
-5. docker compose run --rm app php artisan migrate --seed
-6. docker compose run --rm app php artisan storage:link
-7. docker compose run --rm app sh -c "npm ci && npm run build"
-8. docker compose up -d
+### Étapes avec Docker (compose)
+1. make init
 
-Tests et qualité
-- `make lint` — Pint (style de code)
-- `make analyse` — Larastan/PHPStan (analyse statique, niveau 5)
-- `make test` — Tests PHPUnit
-- `make quality` — lint + analyse + test
-- `make pint-fix` — Corriger le style avec Pint
-- `make rector-check` / `make rector-fix` — Rector (refactoring automatique)
-- Composer: `composer lint`, `composer analyse`, `composer test`
+### Tests et qualité (rappel)
+
+Voir la section **Commandes** ci-dessus pour les détails. Résumé : `make lint`, `make analyse`, `make test`, `make coverage`, `make quality`. Composer : `composer lint`, `composer analyse`, `composer test`. Rector : `make rector`, `make rector-fix`.
+
+---
+
+## Liens utiles (app lancée)
+
+| Lien | Description                                  |
+|------|----------------------------------------------|
+| http://localhost:8080 | Page d'accueil (Docker)                      |
+| http://localhost:8080/login | Connexion                                    |
+| http://localhost:8080/dashboard | Back-office offres & produits (auth requise) |
+| http://localhost:8080/api/offers | API publique, offres et produits publiés     |
+| http://localhost:8080/api-docs | Documentation Swagger / OpenAPI              |
+| http://localhost:8080/openapi.json | Spécification OpenAPI (JSON)                 |
+
+*Avec `php artisan serve`, remplacer le port `8080` par `8000`.*
+
+---
+
 
