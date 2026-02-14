@@ -5,7 +5,7 @@ DB_SERVICE := db
 .PHONY: help build up down restart ps logs clean \
 	init install deps keygen migrate seed fresh storage-link \
 	assets-build assets-dev test lint analyse phpstan pint pint-fix rector-check rector quality wait-db \
-	shell db-shell artisan composer npm
+	openapi-docs api-docs shell db-shell artisan composer npm
 
 help:
 	@echo "Commandes disponibles:"
@@ -25,6 +25,8 @@ help:
 	@echo "  make assets-build  - Build les assets front"
 	@echo "  make assets-dev    - Lance Vite en mode dev"
 	@echo "  make test          - Lance les tests Laravel"
+	@echo "  make api-docs-link - Affiche l'URL de la doc Swagger"
+	@echo "  make openapi-docs  - Génère la doc OpenAPI depuis le code (attributs)"
 	@echo "  make lint          - Lance Pint (vérification style)"
 	@echo "  make analyse       - Lance Larastan/PHPStan (analyse statique)"
 	@echo "  make phpstan       - Alias de make analyse"
@@ -88,6 +90,15 @@ assets-dev:
 
 test:
 	$(DOCKER_COMPOSE) run --rm $(APP_SERVICE) php artisan test
+
+api-docs-link:
+	@echo "Documentation Swagger: http://localhost:8080/api-docs"
+	@echo "Spécification OpenAPI: http://localhost:8080/openapi.json"
+
+openapi-docs:
+	$(DOCKER_COMPOSE) run --rm $(APP_SERVICE) php artisan openapi:generate
+	@echo "========================================================="
+	$(MAKE) api-docs-link
 
 lint: pint
 

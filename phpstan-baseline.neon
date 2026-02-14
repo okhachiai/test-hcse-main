@@ -1,12 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Relation ''products'' is not found in App\\Models\\Offer model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Http/Controllers/Api/OfferController.php
-
-		-
 			message: '#^Parameter \#1 \$user of class Illuminate\\Auth\\Events\\Verified constructor expects Illuminate\\Contracts\\Auth\\MustVerifyEmail, App\\Models\\User\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -17,6 +11,12 @@ parameters:
 			identifier: larastan.relationExistence
 			count: 1
 			path: app/Http/Controllers/OfferController.php
+
+		-
+			message: '#^Relation ''products'' is not found in App\\Models\\Offer model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/OfferRepository.php
 
 		-
 			message: '#^Comparison operation "\>\=" between int\<80500, 80599\> and 80500 is always true\.$#'

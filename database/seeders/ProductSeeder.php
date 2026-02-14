@@ -13,7 +13,7 @@ class ProductSeeder extends Seeder
         $offers = Offer::all();
 
         foreach ($offers as $offer) {
-            $count = rand(2, 5);
+            $count = rand(5, 15);
             $products = Product::factory($count)->create(['offer_id' => $offer->id]);
 
             $states = ['draft', 'published', 'invisible'];

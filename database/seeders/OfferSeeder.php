@@ -12,9 +12,9 @@ class OfferSeeder extends Seeder
     {
         $this->createPlaceholderImages();
 
-        Offer::factory(3)->published()->create();
-        Offer::factory(2)->draft()->create();
-        Offer::factory(1)->hidden()->create();
+        Offer::factory(50)->published()->create();
+        Offer::factory(30)->draft()->create();
+        Offer::factory(20)->hidden()->create();
     }
 
     private function createPlaceholderImages(): void
