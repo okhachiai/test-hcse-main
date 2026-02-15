@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Api;
 
 use App\Domain\Enums\Pagination;
+use App\Domain\StateRules\OfferStateRules;
 use App\Models\Offer;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,6 +14,22 @@ use Tests\TestCase;
 class OfferApiTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_api_returns_only_published_by_default_using_state_rules(): void
+    {
+        $apiScope = OfferStateRules::defaultScopeForApi();
+        $this->assertSame('published', $apiScope->value);
+
+        Offer::factory()->published()->create(['name' => 'Visible']);
+        Offer::factory()->draft()->create(['name' => 'Hidden']);
+        Offer::factory()->hidden()->create(['name' => 'Also Hidden']);
+
+        $response = $this->getJson('/api/offers');
+
+        $response->assertOk();
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonPath('data.0.name', 'Visible');
+    }
 
     public function test_api_returns_only_published_offers(): void
     {

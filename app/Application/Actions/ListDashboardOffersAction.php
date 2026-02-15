@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Actions;
 
 use App\Application\Data\DashboardData;
-use App\Domain\Enums\OfferState;
 use App\Domain\Enums\Pagination;
+use App\Domain\StateRules\OfferStateRules;
 use App\Infrastructure\QueryServices\OfferQueryService;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
@@ -31,8 +31,21 @@ readonly class ListDashboardOffersAction
             offers: $offers,
             filterParams: $this->buildFilterParams($request),
             activeState: $request->filled('state') ? $request->query('state') : null,
-            offerStates: OfferState::labels(),
+            offerStates: $this->offerStatesForBackoffice(),
         );
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function offerStatesForBackoffice(): array
+    {
+        $states = [];
+        foreach (OfferStateRules::visibleForBackoffice() as $state) {
+            $states[$state->value] = $state->label();
+        }
+
+        return $states;
     }
 
     /**

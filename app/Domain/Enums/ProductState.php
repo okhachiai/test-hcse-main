@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Enums;
 
+use App\Domain\StateRules\ProductStateRules;
+
 enum ProductState: string
 {
     case Draft = 'draft';
@@ -11,22 +13,18 @@ enum ProductState: string
     case Invisible = 'invisible';
 
     /**
-     * States reachable from this state.
+     * States reachable from this state (delegates to ProductStateRules).
      *
      * @return array<self>
      */
     public function allowedTransitions(): array
     {
-        return match ($this) {
-            self::Draft => [self::Published, self::Invisible],
-            self::Published => [self::Draft, self::Invisible],
-            self::Invisible => [self::Draft, self::Published],
-        };
+        return ProductStateRules::transitions()[$this->value] ?? [];
     }
 
     public function canTransitionTo(self $to): bool
     {
-        return in_array($to, $this->allowedTransitions(), true);
+        return ProductStateRules::canTransition($this, $to);
     }
 
     public function label(): string

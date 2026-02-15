@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Enums;
 
+use App\Domain\StateRules\OfferStateRules;
+
 enum OfferState: string
 {
     case Draft = 'draft';
@@ -11,22 +13,18 @@ enum OfferState: string
     case Hidden = 'hidden';
 
     /**
-     * States reachable from this state.
+     * States reachable from this state (delegates to OfferStateRules).
      *
      * @return array<self>
      */
     public function allowedTransitions(): array
     {
-        return match ($this) {
-            self::Draft => [self::Published, self::Hidden],
-            self::Published => [self::Draft, self::Hidden],
-            self::Hidden => [self::Draft, self::Published],
-        };
+        return OfferStateRules::transitions()[$this->value] ?? [];
     }
 
     public function canTransitionTo(self $to): bool
     {
-        return in_array($to, $this->allowedTransitions(), true);
+        return OfferStateRules::canTransition($this, $to);
     }
 
     public function label(): string
