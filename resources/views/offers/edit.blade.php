@@ -10,13 +10,16 @@
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     <section>
-                        <header>
+                        <header class="flex items-center justify-between gap-4">
                             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
                                 Modifier une offre
                             </h2>
+                            <x-secondary-link href="{{ route('offers.products.index', $offer) }}">
+                                Gérer les produits
+                            </x-secondary-link>
                         </header>
 
-                        <form method="post" action="{{ route('offers.update', $offer->id) }}" class="mt-6 space-y-6" enctype="multipart/form-data">
+                        <form method="post" action="{{ route('offers.update', $offer) }}" class="mt-6 space-y-6" enctype="multipart/form-data">
                             @csrf
                             @method('patch')
 
@@ -34,8 +37,9 @@
 
                             <div>
                                 <x-input-label for="image" value="Image" />
-                                <img src="{{ asset('storage/' . $offer->image) }}" alt="{{ $offer->name }}" class="margin-x-auto h-20" />
-                                <x-file-input id="image" name="image" class="mt-1 block w-full" required />
+                                <img src="{{ asset('storage/' . $offer->image) }}" alt="{{ $offer->name }}" class="margin-x-auto h-20 mt-2" />
+                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Laisser vide pour conserver l'image actuelle.</p>
+                                <x-file-input id="image" name="image" class="mt-1 block w-full" />
                                 <x-input-error class="mt-2" :messages="$errors->get('image')" />
                             </div>
 
@@ -48,9 +52,9 @@
                             <div>
                                 <x-input-label for="state" value="État" />
                                 <x-select id="state" name="state" class="mt-1 block w-full" required>
-                                    <option value="draft" @selected(old('state', $offer->state) == 'draft')>Brouillon</option>
-                                    <option value="published" @selected(old('state', $offer->state) == 'published')>Publié</option>
-                                    <option value="hidden" @selected(old('state', $offer->state) == 'hidden')>Masquée</option>
+                                    @foreach(\App\Enums\OfferState::labels() as $value => $label)
+                                        <option value="{{ $value }}" @selected(old('state', $offer->state->value) === $value)>{{ $label }}</option>
+                                    @endforeach
                                 </x-select>
                                 <x-input-error class="mt-2" :messages="$errors->get('state')" />
                             </div>

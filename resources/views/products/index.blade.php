@@ -11,10 +11,10 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <div class="flex items-center justify-between mb-4">
                         <div>
-                            <a href="{{ route('offers.show', $offer->id) }}" class="text-sm text-indigo-600 hover:underline">← Retour à l'offre</a>
+                            <a href="{{ route('offers.show', $offer) }}" class="text-sm text-indigo-600 hover:underline">← Retour à l'offre</a>
                         </div>
                         <div>
-                            <x-primary-link href="{{ route('offers.products.create', $offer->id) }}">Ajouter un produit</x-primary-link>
+                            <x-primary-link href="{{ route('offers.products.create', $offer) }}">Ajouter un produit</x-primary-link>
                         </div>
                     </div>
 
@@ -47,12 +47,12 @@
                                         <td class="px-4 py-3">{{ number_format((float)$product->price, 2, ',', ' ') }} €</td>
                                         <td class="px-4 py-3">
                                             <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
-                                                {{ \App\Models\Product::$states[$product->state] ?? $product->state }}
+                                                {{ $product->state->label() }}
                                             </span>
                                         </td>
                                         <td class="px-4 py-3 text-right whitespace-nowrap">
-                                            <x-primary-link href="{{ route('offers.products.edit', [$offer->id, $product->id]) }}">Modifier</x-primary-link>
-                                            <form action="{{ route('offers.products.destroy', [$offer->id, $product->id]) }}" method="POST" class="inline">
+                                            <x-primary-link href="{{ route('offers.products.edit', [$offer, $product]) }}">Modifier</x-primary-link>
+                                            <form action="{{ route('offers.products.destroy', [$offer, $product]) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <x-danger-button onclick="return confirm('Supprimer ce produit ?')">Supprimer</x-danger-button>
@@ -67,6 +67,12 @@
                             </tbody>
                         </table>
                     </div>
+
+                    @if($products->hasPages())
+                        <div class="mt-4">
+                            {{ $products->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

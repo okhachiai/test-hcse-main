@@ -1,0 +1,187 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "HelloCSE API",
+        "description": "Documentation de l'API HelloCSE - Gestion des offres et produits",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api",
+            "description": "API locale"
+        }
+    ],
+    "paths": {
+        "/offers": {
+            "get": {
+                "tags": [
+                    "Offres"
+                ],
+                "summary": "Liste des offres publiées",
+                "description": "Retourne la liste paginée des offres publiées avec leurs produits publiés.",
+                "operationId": "listOffers",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Numéro de page pour la pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des offres avec pagination",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OfferListResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "OfferListResponse": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Offer"
+                        }
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/PaginationLinks"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "Offer": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Offre Premium"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "offre-premium-1234"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "offers/placeholder.jpg"
+                    },
+                    "products": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Product"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "PaginationLinks": {
+                "properties": {
+                    "first": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "last": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "prev": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
+                    },
+                    "next": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PaginationMeta": {
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "from": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "path": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "to": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "Product": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Produit XYZ"
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "SKU-1234-ABCD"
+                    },
+                    "image": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 99.99
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Offres",
+            "description": "Offres"
+        }
+    ]
+}

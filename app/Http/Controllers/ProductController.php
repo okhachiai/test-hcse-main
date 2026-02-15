@@ -1,94 +1,74 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Actions\CreateProductAction;
+use App\Actions\DeleteProductAction;
+use App\Actions\ListProductsAction;
+use App\Actions\UpdateProductAction;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Offer;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    public function index(string $offerId): View
+    public function index(ListProductsAction $listProductsAction, Offer $offer): View
     {
-        $offer = Offer::findOrFail($offerId);
-        $products = $offer->products()->latest()->get();
+        $this->authorize('manage', $offer);
 
-        return view('products.index', compact('offer', 'products'));
-    }
-
-    public function create(string $offerId): View
-    {
-        $offer = Offer::findOrFail($offerId);
-        $product = new Product();
-        return view('products.create', compact('offer', 'product'));
-    }
-
-    public function store(Request $request, string $offerId): RedirectResponse
-    {
-        $offer = Offer::findOrFail($offerId);
-
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'sku' => ['required', 'string', 'max:255', 'unique:products,sku'],
-            'image' => ['required', 'file'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'state' => ['required', 'in:' . implode(',', array_keys(Product::$states))],
+        return view('products.index', [
+            'offer' => $offer,
+            'products' => $listProductsAction->execute($offer),
         ]);
-
-        $product = new Product($data);
-        $product->offer_id = $offer->id;
-        $product->save();
-
-        if ($request->hasFile('image')) {
-            $product->update(['image' => $request->file('image')->store('products', ['disk' => 'public'])]);
-        }
-
-        return redirect()
-            ->route('offers.products.index', $offer->id)
-            ->with('status', 'Produit créé avec succès.');
     }
 
-    public function edit(string $offerId, string $productId): View
+    public function create(Offer $offer): View
     {
-        $offer = Offer::findOrFail($offerId);
-        $product = $offer->products()->findOrFail($productId);
-        return view('products.edit', compact('offer', 'product'));
-    }
+        $this->authorize('manage', $offer);
 
-    public function update(Request $request, string $offerId, string $productId): RedirectResponse
-    {
-        $offer = Offer::findOrFail($offerId);
-        $product = $offer->products()->findOrFail($productId);
-
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'sku' => ['required', 'string', 'max:255', 'unique:products,sku,' . $product->id],
-            'image' => ['nullable', 'file'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'state' => ['required', 'in:' . implode(',', array_keys(Product::$states))],
+        return view('products.create', [
+            'offer' => $offer,
+            'product' => new Product,
         ]);
-
-        $product->update($data);
-
-        if ($request->hasFile('image')) {
-            $product->update(['image' => $request->file('image')->store('products', ['disk' => 'public'])]);
-        }
-
-        return redirect()
-            ->route('offers.products.index', $offer->id)
-            ->with('status', 'Produit mis à jour avec succès.');
     }
 
-    public function destroy(string $offerId, string $productId): RedirectResponse
+    public function store(StoreProductRequest $request, CreateProductAction $createProductAction, Offer $offer): RedirectResponse
     {
-        $offer = Offer::findOrFail($offerId);
-        $product = $offer->products()->findOrFail($productId);
-        $product->delete();
+        $this->authorize('manage', $offer);
 
-        return redirect()
-            ->route('offers.products.index', $offer->id)
-            ->with('status', 'Produit supprimé avec succès.');
+        $createProductAction->execute($request, $offer);
+
+        return Redirect::route('offers.products.index', $offer)->with('status', 'Produit créé avec succès.');
+    }
+
+    public function edit(Offer $offer, Product $product): View
+    {
+        $this->authorize('manage', $offer);
+
+        return view('products.edit', ['offer' => $offer, 'product' => $product]);
+    }
+
+    public function update(UpdateProductRequest $request, UpdateProductAction $updateProductAction, Offer $offer, Product $product): RedirectResponse
+    {
+        $this->authorize('manage', $offer);
+
+        $updateProductAction->execute($request, $offer, $product);
+
+        return Redirect::route('offers.products.index', $offer)->with('status', 'Produit mis à jour avec succès.');
+    }
+
+    public function destroy(DeleteProductAction $deleteProductAction, Offer $offer, Product $product): RedirectResponse
+    {
+        $this->authorize('manage', $offer);
+
+        $deleteProductAction->execute($product);
+
+        return Redirect::route('offers.products.index', $offer)->with('status', 'Produit supprimé avec succès.');
     }
 }
