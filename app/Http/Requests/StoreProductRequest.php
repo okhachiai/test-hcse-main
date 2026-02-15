@@ -10,9 +10,20 @@ use App\Http\Rules\SkuRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Override;
 
 class StoreProductRequest extends FormRequest
 {
+    #[Override]
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'name' => is_scalar($this->name ?? null) ? trim((string) $this->name) : null,
+            'sku' => is_scalar($this->sku ?? null) ? trim((string) $this->sku) : null,
+            'price' => is_numeric($this->price ?? '') ? (float) $this->price : $this->price,
+        ]);
+    }
+
     /**
      * @return array<string, ValidationRule|array<mixed>|string>
      */

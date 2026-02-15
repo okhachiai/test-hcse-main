@@ -53,7 +53,7 @@
 
 ## Temps passé et pistes d'amélioration
 
-**Temps passé : 7h**
+**Temps passé : 4h**
 
 **Avec plus de temps, j'aurais :**
 - Introduire des jobs asynchrones pour le traitement des images (resize, optimisation)
@@ -70,11 +70,11 @@
 - Docker
 
 ### Setup complet avec Docker (compose)
-| Commande | Description                                    |
-|----------|------------------------------------------------|
+| Commande                                                | Description                                    |
+|---------------------------------------------------------|------------------------------------------------|
 | `git clone git@github.com:okhachiai/test-hcse-main.git` | cloner le projet de github                     |
-| `git checkout feat/hello-cse-technical-test` | Se positioner sur la branch de test            |
-| `make init` | Build et lancer le projet en local dans docker |
+| `git checkout feat/ddd-bonus-work`                      | Se positioner sur la branch de test            |
+| `make init`                                             | Build et lancer le projet en local dans docker |
 
 ## Commandes utiles (Makefile, via Docker)
 
@@ -110,6 +110,11 @@
 | http://localhost:8080/openapi.json | Spécification OpenAPI (JSON)               |
 
 *Avec `php artisan serve`, remplacer le port `8080` par `8000`.*
+
+### Politique de rate limiting (API)
+
+- **`GET /api/offers`** : 60 requêtes/minute par IP.
+- Au-delà de la limite : **429 Too Many Requests** avec un message explicite et header `Retry-After`.
 
 ---
 

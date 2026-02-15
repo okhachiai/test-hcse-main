@@ -79,6 +79,18 @@ class Offer extends Model
     }
 
     /**
+     * Offers visible in the public API (published only).
+     *
+     * @param  Builder<Offer>  $query
+     * @return Builder<Offer>
+     */
+    #[Scope]
+    protected function visibleForApi(Builder $query): Builder
+    {
+        return $this->published($query);
+    }
+
+    /**
      * @param  Builder<Offer>  $query
      * @return Builder<Offer>
      */

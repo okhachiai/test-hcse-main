@@ -29,7 +29,7 @@ class OfferQueryServiceTest extends TestCase
         Offer::factory()->draft()->create(['name' => 'Draft']);
         Offer::factory()->hidden()->create(['name' => 'Hidden']);
 
-        $result = $this->queryService->listPublished(10);
+        $result = $this->queryService->listPublished(page: 1, perPage: 10);
 
         $this->assertCount(1, $result);
         $this->assertSame('Published', $result->first()->name);
@@ -41,7 +41,7 @@ class OfferQueryServiceTest extends TestCase
         Product::factory()->published()->create(['offer_id' => $offer->id, 'name' => 'Pub Product']);
         Product::factory()->draft()->create(['offer_id' => $offer->id, 'name' => 'Draft Product']);
 
-        $result = $this->queryService->listPublished(10);
+        $result = $this->queryService->listPublished(page: 1, perPage: 10);
 
         $this->assertCount(1, $result->first()->products);
         $this->assertSame('Pub Product', $result->first()->products->first()->name);

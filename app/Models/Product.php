@@ -68,4 +68,16 @@ class Product extends Model
     {
         return $query->where('state', ProductState::Draft);
     }
+
+    /**
+     * Products visible in the public API (published only).
+     *
+     * @param  Builder<Product>  $query
+     * @return Builder<Product>
+     */
+    #[Scope]
+    protected function visibleForApi(Builder $query): Builder
+    {
+        return $this->published($query);
+    }
 }

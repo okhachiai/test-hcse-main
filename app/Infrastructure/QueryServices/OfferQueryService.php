@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\QueryServices;
 
 use App\Domain\Enums\Pagination;
-use App\Domain\StateRules\OfferStateRules;
-use App\Domain\StateRules\ProductStateRules;
 use App\Models\Offer;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -19,16 +17,13 @@ class OfferQueryService
      *
      * @return LengthAwarePaginator<int, Offer>
      */
-    public function listPublished(int $perPage = Pagination::DefaultPerPage->value): LengthAwarePaginator
+    public function listPublished(int $page = 1, int $perPage = Pagination::DefaultPerPage->value): LengthAwarePaginator
     {
-        $offerState = OfferStateRules::defaultScopeForApi();
-        $productState = ProductStateRules::defaultScopeForApi();
-
         return Offer::query()
-            ->where('state', $offerState)
+            ->visibleForApi()
             ->latest()
-            ->with(['products' => fn ($q) => $q->where('state', $productState)])
-            ->paginate($perPage);
+            ->with(['products' => fn ($q) => $q->visibleForApi()])
+            ->paginate(perPage: $perPage, page: $page);
     }
 
     /**

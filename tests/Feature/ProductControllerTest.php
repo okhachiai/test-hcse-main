@@ -113,4 +113,17 @@ class ProductControllerTest extends TestCase
 
         $response->assertStatus(403);
     }
+
+    public function test_destroy_returns_403_when_accessing_another_users_product(): void
+    {
+        $owner = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $offer = Offer::factory()->for($owner)->create();
+        $product = Product::factory()->for($offer)->create();
+
+        $response = $this->actingAs($otherUser)->delete(route('offers.products.destroy', [$offer, $product]));
+
+        $response->assertStatus(403);
+        $this->assertDatabaseHas('products', ['id' => $product->id]);
+    }
 }

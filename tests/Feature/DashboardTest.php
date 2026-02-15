@@ -86,6 +86,18 @@ class DashboardTest extends TestCase
         $this->assertSame('Unique Alpha Name', $offers->first()->name);
     }
 
+    public function test_dashboard_returns_422_for_invalid_state_filter(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->getJson(route('dashboard', ['state' => 'invalid-state']));
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['state']);
+        $this->assertArrayHasKey('errors', $response->json());
+        $this->assertArrayHasKey('state', $response->json('errors'));
+    }
+
     public function test_dashboard_orders_latest_first(): void
     {
         $user = User::factory()->create();

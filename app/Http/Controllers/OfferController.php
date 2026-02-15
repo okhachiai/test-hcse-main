@@ -19,6 +19,8 @@ class OfferController extends Controller
 {
     public function create(): View
     {
+        $this->authorize('create', Offer::class);
+
         return view('offers.create');
     }
 
