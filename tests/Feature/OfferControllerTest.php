@@ -88,4 +88,16 @@ class OfferControllerTest extends TestCase
 
         $response->assertStatus(403);
     }
+
+    public function test_destroy_returns_403_when_accessing_another_users_offer(): void
+    {
+        $owner = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $offer = Offer::factory()->for($owner)->create();
+
+        $response = $this->actingAs($otherUser)->delete(route('offers.destroy', $offer));
+
+        $response->assertStatus(403);
+        $this->assertDatabaseHas('offers', ['id' => $offer->id]);
+    }
 }

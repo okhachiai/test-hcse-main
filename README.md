@@ -1,11 +1,12 @@
 ## Architecture et décisions techniques
 
-### Structure générale
+### Structure générale (DDD light)
 
-- **Controllers** : restent fins, délèguent aux Actions et retournent la réponse (View, Redirect, JsonResponse).
-- **Actions** : logique métier atomique (CreateOffer, DeleteProduct, ListDashboardOffers…). Injectées via le container.
-- **Repositories** : accès aux données (OfferRepository, ProductRepository). Encapsulent les requêtes et scopes.
-- **Form Requests** : validation centralisée (StoreOfferRequest, UpdateProductRequest…) avec `Rule::enum()` pour les états.
+- **Domain** (`app/Domain/`) : Enums, Value Objects (Sku, Price), Specifications (OfferCanBePublishedSpecification). Code pur, sans dépendance framework.
+- **Application** (`app/Application/`) : Actions (use-cases), Data/DTOs, Contracts (interfaces des repositories).
+- **Infrastructure** (`app/Infrastructure/`) : Implémentations Eloquent (Repositories), QueryServices (OfferQueryService), ImageStorage.
+- **Controllers** : fins, délèguent aux Actions, retournent View/Redirect/JsonResponse.
+- **Form Requests** : validation avec Rules (SkuRule, PriceRule, OfferCanBePublishedRule), `Rule::enum()` pour les états.
 
 ### Enums
 
@@ -35,26 +36,26 @@
 
 ## Ce qui a été modifié (résumé)
 
-- **Enums** : états typés (OfferState, ProductState) à la place de tableaux statiques.
+- **Enums** : états typés (OfferState, ProductState) avec `allowedTransitions()` et `canTransitionTo()` pour les règles de transition.
 - **Actions** : logique métier extraite (Create, Update, Delete, List). Controllers allégés.
 - **Repositories** : requêtes encapsulées, scopes `published()`/`draft()`, tri `latest()` par défaut.
 - **ImageStorage** : service dédié pour stocker et remplacer les images.
 - **Resources** : réponses API normalisées via OfferResource/ProductResource.
 - **Dashboard** : filtres (state, name, slug) + pagination avec préservation des query strings.
 - **Validation** : FormRequests avec `Rule::enum()`, règles partagées.
-- **Tests** : unitaires (scopes, repositories, ImageStorage), feature (API, dashboard, validation, console).
+- **Tests** : unitaires (scopes, repositories, ImageStorage, OfferState, ProductState, Sku, Price, OfferCanBePublishedSpecification, OfferQueryService), feature (API, dashboard, validation, console).
 - **PHPStan** : niveau 9, sans baseline, erreurs corrigées.
 - **CI** : GitHub Actions (lint Pint, PHPStan, tests) sur push/PR vers `main`.
+- **Bonus** : API rate limiting (60 req/min), ProductPolicy, règles de transition d’état dans les Enums.
+- **DDD light** : Domain (Enums, Sku, Price VOs, OfferCanBePublishedSpecification), Application (Actions, Contracts), Infrastructure (Repositories, OfferQueryService). Interfaces Repository + bindings.
 
 ---
 
 ## Temps passé et pistes d'amélioration
 
-**Temps passé : 7h**
+**Temps passé : 4h**
 
 **Avec plus de temps, j'aurais :**
-- Introduire DDD light avec un Domain (Enums, Sku, Price VOs, OfferCanBePublishedSpecification), Application (Actions, Contracts), Infrastructure (Repositories, OfferQueryService). Interfaces Repository + bindings.
-- Introduire l'API rate limiting (60 req/min), ProductPolicy, règles de transition d’état dans les Enums.
 - Introduire des jobs asynchrones pour le traitement des images (resize, optimisation)
 - Introduire un system de cache robuste pour améliorer les perfs
 - Ajouter des tests E2E (Dusk) pour les flux critiques du back-office
@@ -69,11 +70,11 @@
 - Docker
 
 ### Setup complet avec Docker (compose)
-| Commande | Description                                    |
-|----------|------------------------------------------------|
+| Commande                                                | Description                                    |
+|---------------------------------------------------------|------------------------------------------------|
 | `git clone git@github.com:okhachiai/test-hcse-main.git` | cloner le projet de github                     |
-| `git checkout feat/hello-cse-technical-test` | Se positioner sur la branch de test            |
-| `make init` | Build et lancer le projet en local dans docker |
+| `git checkout feat/ddd-bonus-work`                      | Se positioner sur la branch de test            |
+| `make init`                                             | Build et lancer le projet en local dans docker |
 
 ## Commandes utiles (Makefile, via Docker)
 
@@ -109,6 +110,11 @@
 | http://localhost:8080/openapi.json | Spécification OpenAPI (JSON)               |
 
 *Avec `php artisan serve`, remplacer le port `8080` par `8000`.*
+
+### Politique de rate limiting (API)
+
+- **`GET /api/offers`** : 60 requêtes/minute par IP.
+- Au-delà de la limite : **429 Too Many Requests** avec un message explicite et header `Retry-After`.
 
 ---
 

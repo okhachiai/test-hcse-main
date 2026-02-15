@@ -35,6 +35,27 @@ class OfferValidationTest extends TestCase
         $response->assertSessionHasErrors(['name', 'slug', 'image', 'state']);
     }
 
+    public function test_store_offer_with_invalid_payload_returns_422_with_error_structure_for_json(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->postJson(route('offers.store'), [
+            'name' => '',
+            'state' => 'invalid-state',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonStructure([
+            'message',
+            'errors' => [
+                'name',
+                'slug',
+                'image',
+                'state',
+            ],
+        ]);
+    }
+
     public function test_store_offer_with_duplicate_slug_returns_validation_error(): void
     {
         $user = User::factory()->create();

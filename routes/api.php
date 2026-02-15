@@ -6,5 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/user', fn (Request $request) => $request->user())->middleware('auth:sanctum');
 
-// Public endpoint to list published offers
-Route::get('/offers', new ApiOfferController()->index(...));
+// Public endpoints (rate limited: 60 req/min per IP via named limiter 'api')
+Route::middleware('throttle:api')->group(function () {
+    Route::get('/offers', new ApiOfferController()->index(...));
+});

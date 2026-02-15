@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\OfferState;
+use App\Domain\Enums\OfferState;
 use Database\Factories\OfferFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -76,6 +76,18 @@ class Offer extends Model
     protected function draft(Builder $query): Builder
     {
         return $query->where('state', OfferState::Draft);
+    }
+
+    /**
+     * Offers visible in the public API (published only).
+     *
+     * @param  Builder<Offer>  $query
+     * @return Builder<Offer>
+     */
+    #[Scope]
+    protected function visibleForApi(Builder $query): Builder
+    {
+        return $this->published($query);
     }
 
     /**

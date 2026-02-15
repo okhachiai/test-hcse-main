@@ -46,7 +46,7 @@
                             <div>
                                 <x-input-label for="state" value="État" />
                                 <x-select id="state" name="state" class="mt-1 block w-full" required>
-                                    @foreach(\App\Enums\OfferState::labels() as $value => $label)
+                                    @foreach(\App\Domain\Enums\OfferState::labels() as $value => $label)
                                         <option value="{{ $value }}" @selected(old('state') === $value)>{{ $label }}</option>
                                     @endforeach
                                 </x-select>

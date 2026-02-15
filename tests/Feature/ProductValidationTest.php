@@ -38,6 +38,23 @@ class ProductValidationTest extends TestCase
         $response->assertSessionHasErrors(['name', 'sku', 'image', 'price', 'state']);
     }
 
+    public function test_store_product_with_invalid_sku_format_returns_validation_error(): void
+    {
+        $user = User::factory()->create();
+        $offer = Offer::factory()->for($user)->create();
+        $file = UploadedFile::fake()->image('product.jpg');
+
+        $response = $this->actingAs($user)->post(route('offers.products.store', $offer), [
+            'name' => 'Product',
+            'sku' => 'invalid sku with spaces',
+            'image' => $file,
+            'price' => 10,
+            'state' => 'published',
+        ]);
+
+        $response->assertSessionHasErrors(['sku']);
+    }
+
     public function test_store_product_with_duplicate_sku_returns_validation_error(): void
     {
         $user = User::factory()->create();

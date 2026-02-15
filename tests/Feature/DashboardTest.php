@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
-use App\Enums\Pagination;
+use App\Domain\Enums\Pagination;
 use App\Models\Offer;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -84,6 +84,18 @@ class DashboardTest extends TestCase
         $offers = $response->viewData('offers');
         $this->assertCount(1, $offers);
         $this->assertSame('Unique Alpha Name', $offers->first()->name);
+    }
+
+    public function test_dashboard_returns_422_for_invalid_state_filter(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->getJson(route('dashboard', ['state' => 'invalid-state']));
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['state']);
+        $this->assertArrayHasKey('errors', $response->json());
+        $this->assertArrayHasKey('state', $response->json('errors'));
     }
 
     public function test_dashboard_orders_latest_first(): void

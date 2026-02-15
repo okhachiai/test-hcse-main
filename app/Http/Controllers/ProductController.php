@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\CreateProductAction;
-use App\Actions\DeleteProductAction;
-use App\Actions\ListProductsAction;
-use App\Actions\UpdateProductAction;
+use App\Application\Actions\CreateProductAction;
+use App\Application\Actions\DeleteProductAction;
+use App\Application\Actions\ListProductsAction;
+use App\Application\Actions\UpdateProductAction;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Offer;
@@ -49,14 +49,14 @@ class ProductController extends Controller
 
     public function edit(Offer $offer, Product $product): View
     {
-        $this->authorize('manage', $offer);
+        $this->authorize('manage', $product);
 
         return view('products.edit', ['offer' => $offer, 'product' => $product]);
     }
 
     public function update(UpdateProductRequest $request, UpdateProductAction $updateProductAction, Offer $offer, Product $product): RedirectResponse
     {
-        $this->authorize('manage', $offer);
+        $this->authorize('manage', $product);
 
         $updateProductAction->execute($request, $offer, $product);
 
@@ -65,7 +65,7 @@ class ProductController extends Controller
 
     public function destroy(DeleteProductAction $deleteProductAction, Offer $offer, Product $product): RedirectResponse
     {
-        $this->authorize('manage', $offer);
+        $this->authorize('manage', $product);
 
         $deleteProductAction->execute($product);
 
